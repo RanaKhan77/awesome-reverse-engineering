@@ -252,6 +252,7 @@ Agent integrations expose existing analysis tools or coordinate an investigation
 - [IDA Pro MCP](https://github.com/mrexodia/ida-pro-mcp) - Exposes IDA analysis and scripting capabilities to MCP clients; requires a compatible IDA installation.
 - [JADX-AI-MCP](https://github.com/zinja-coder/jadx-ai-mcp) - Connects AI clients to JADX for Android application analysis.
 - [radare2 MCP](https://github.com/radareorg/radare2-mcp) - Provides an MCP interface to radare2 for agent-driven binary analysis.
+- [RES](https://github.com/alextnetto/res) - Experimental agent skill for documenting a SaaS web app's screens, business rules, data model, API shapes, and design tokens through the browser, with sandbox and change-ledger guidance; requires a browser-driving agent and Node.js 22+.
 - [WinDbg MCP](https://learn.microsoft.com/en-us/windows-hardware/drivers/debuggercmds/set-up-windbg-mcp) - Official MCP server built into WinDbg 1.2610.1001.0 and later; supported clients are VS Code with GitHub Copilot and GitHub Copilot CLI, with one active MCP client per WinDbg session.
 
 ## Practice and communities
