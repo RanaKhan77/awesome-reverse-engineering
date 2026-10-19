@@ -2,7 +2,7 @@
 import argparse
 from datetime import datetime, timezone
 import hashlib
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 import json
 from pathlib import Path
 import platform
@@ -41,9 +41,27 @@ def run(*args):
     return completed.stdout.strip()
 
 
+def require_command(executable, *args):
+    try:
+        run(executable, *args)
+    except FileNotFoundError as exc:
+        raise SystemExit(
+            f"{executable} was not found. Install JDK 17 or newer and retry."
+        ) from exc
+
+
 def verify(work, jar):
     for package, expected in {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0"}.items():
-        assert version(package) == expected, f"Unexpected {package} version"
+        try:
+            installed = version(package)
+        except PackageNotFoundError as exc:
+            raise SystemExit(
+                f"Missing Python dependency: {package}. Install it with `python -m pip install -r examples/resource-intake/requirements.txt`."
+            ) from exc
+        assert installed == expected, f"Unexpected {package} version"
+
+    require_command("javac", "-version")
+    require_command("java", "-version")
 
     schema = Struct(
         "magic" / Const(b"SMK1"), "length" / Int16ul, "kind" / Byte,

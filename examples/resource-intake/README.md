@@ -13,6 +13,8 @@ python3.11 -m venv "$resource_examples_dir/venv"
 
 The runner downloads [Vineflower 1.12.0](https://github.com/Vineflower/vineflower/releases/tag/1.12.0) and checks the JAR SHA-256 before executing it. An existing JAR can be supplied with `--vineflower-jar /path/to/vineflower-1.12.0.jar`; the same digest check still applies. Failed assertions or commands fail the run; a successful run writes `results.json` and retains generated artifacts in a unique directory under the selected output path.
 
+On Windows/PowerShell, swap `python3.11` for `py -3.11` (or `python`) in the same commands and ensure the JDK 17 `javac`/`java` tools are on `PATH`.
+
 | Resource / pinned version | Input and independent expected result | Scope |
 | --- | --- | --- |
 | Construct 2.10.70 | Golden bytes `534d4b310500017472616365`: `SMK1`, little-endian length 5, type 1, payload `trace`; parse/build and reject bad magic, truncation, or trailing bytes | One binary schema on this Python host |
