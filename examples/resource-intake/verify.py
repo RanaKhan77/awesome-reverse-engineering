@@ -1,13 +1,16 @@
-"""Reproduce four narrow resource examples with independent expected outputs."""
+"""Reproduce five narrow resource examples with independent expected outputs."""
 import argparse
 from datetime import datetime, timezone
 import hashlib
 from importlib.metadata import version
+import io
 import json
 from pathlib import Path
 import platform
 import struct
 import subprocess
+import sys
+import tarfile
 import tempfile
 from urllib.request import urlopen
 
@@ -20,6 +23,14 @@ JAR_URL = "https://github.com/Vineflower/vineflower/releases/download/1.12.0/vin
 JAR_SHA256 = "1dfcfe974395734fa467ce620661c7623d05ba83670de0529b1fbd63ff548b9d"
 GOLDEN = bytes.fromhex("534d4b310500017472616365")
 EXPECTED_BRANCHES = "-1:-1\n0:11\n1:22\n2:22\n9:-1"
+HERMESC = {
+    98: ("https://registry.npmjs.org/hermes-compiler/-/hermes-compiler-250829098.0.19.tgz",
+         "839af099f0926b5ebbd738ba54764a3f40e35dfc3aac91babf56f8eb7c69280e"),
+    99: ("https://registry.npmjs.org/hermes-compiler/-/hermes-compiler-260318099.0.4.tgz",
+         "613b6230cf796bd1b6a8248e2cf8fb2799a5be92d23d49e96ee0b68dc2bfdcf2"),
+}
+HBC_ORIGINAL_OUTPUT = "even:negative:25"
+HBC_PSEUDOCODE_OUTPUT = "even:negative:21"
 
 
 def sha256(path):
@@ -41,8 +52,52 @@ def run(*args):
     return completed.stdout.strip()
 
 
+def hermesc(work, bytecode_version):
+    url, digest = HERMESC[bytecode_version]
+    with urlopen(url, timeout=120) as response:
+        archive = response.read()
+    assert hashlib.sha256(archive).hexdigest() == digest, f"hermes-compiler {bytecode_version} digest mismatch"
+    member = {"Linux": "package/hermesc/linux64-bin/hermesc", "Darwin": "package/hermesc/osx-bin/hermesc"}[platform.system()]
+    target = work / f"hermesc-{bytecode_version}"
+    with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
+        target.write_bytes(tar.extractfile(member).read())
+    target.chmod(0o755)
+    return target
+
+
+def verify_hermes_dec(work):
+    tools = Path(sys.executable).parent
+    shim = "globalThis.print = console.log; new Function(require('fs').readFileSync(process.argv[1], 'utf8'))();"
+    assert run("node", "-e", shim, str(SOURCE / "hbc_fixture.js")) == HBC_ORIGINAL_OUTPUT
+    digests = {}
+    for bytecode_version in HERMESC:
+        compiler = hermesc(work, bytecode_version)
+        bare, hbc, hasm, pseudo = [work / f"fixture-{bytecode_version}{ext}" for ext in ("-g0.hbc", "-g1.hbc", ".hasm", ".js")]
+        for level, output in (("-g0", bare), ("-g1", hbc)):
+            run(str(compiler), "-emit-binary", level, "-out", str(output), str(SOURCE / "hbc_fixture.js"))
+            assert output.read_bytes()[8] == bytecode_version, "Unexpected HBC header version"
+        parsed = subprocess.run([str(tools / "hbc-file-parser"), str(bare)], text=True, capture_output=True, check=True)
+        assert f"| Version                      | {bytecode_version}" in parsed.stdout
+        assert "not formally supported" in parsed.stderr
+        # With backtrace location info (-g1), the header prints but debug-info parsing raises a TypeError.
+        parsed = subprocess.run([str(tools / "hbc-file-parser"), str(hbc)], text=True, capture_output=True)
+        assert parsed.returncode == 1 and f"| Version                      | {bytecode_version}" in parsed.stdout
+        assert "debug_info_parser.py" in parsed.stderr and "TypeError" in parsed.stderr
+        run(str(tools / "hbc-disassembler"), str(hbc), str(hasm))
+        run(str(tools / "hbc-decompiler"), str(hbc), str(pseudo))
+        listing, code = hasm.read_text(), pseudo.read_text()
+        for needle in ('Function #1 "classify"', 'Function #2 "scaled"', "<Mod>", "'hbc-fixture-marker'"):
+            assert needle in listing, needle
+        for needle in ("// Original name: classify", "// Original name: scaled", "'negative'", "'zero'", "'even'", "'odd'", "r0 = 7;"):
+            assert needle in code, needle
+        # The pseudo-code shares register variables across functions, so running it does not reproduce the original.
+        assert run("node", "-e", shim, str(pseudo)) == HBC_PSEUDOCODE_OUTPUT
+        digests[bytecode_version] = {"g0": sha256(bare), "g1": sha256(hbc)}
+    return digests
+
+
 def verify(work, jar):
-    for package, expected in {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0"}.items():
+    for package, expected in {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8"}.items():
         assert version(package) == expected, f"Unexpected {package} version"
 
     schema = Struct(
@@ -104,19 +159,25 @@ def verify(work, jar):
         assert run("java", "-cp", str(classes), "BranchDemo") == "25"
         assert run("java", "-cp", str(classes), "Probe") == EXPECTED_BRANCHES
 
+    hbc_digests = verify_hermes_dec(work)
+
     return {
         "checked_at": datetime.now(timezone.utc).isoformat(),
-        "host": {"platform": platform.platform(), "python": platform.python_version(), "javac": run("javac", "-version")},
+        "host": {"platform": platform.platform(), "python": platform.python_version(), "javac": run("javac", "-version"), "node": run("node", "--version")},
         "results": [
             {"name": "Construct", "version": "2.10.70", "result": "passed", "scope": "Golden bytes, parse/build, wrong magic, truncation, trailing-data rejection"},
             {"name": "Scapy", "version": "2.8.0", "result": "passed", "scope": "Offline packet/PCAP round trip and independent IP/UDP checksums; no traffic sent"},
             {"name": "YARA-X", "version": "1.21.0", "result": "passed", "scope": "Python API positive/negative matching and strict-regex CompileError"},
             {"name": "Vineflower", "version": "1.12.0", "result": "passed", "scope": "Java 17 record/switch expression, rebuild, main output and five branch vectors"},
+            {"name": "hermes-dec", "version": "0.1.8", "result": "passed", "scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25"},
         ],
-        "inputs": [{"path": name, "sha256": sha256(SOURCE / name)} for name in ("BranchDemo.java", "Probe.java", "verify.py", "requirements.txt")],
+        "inputs": [{"path": name, "sha256": sha256(SOURCE / name)} for name in ("BranchDemo.java", "Probe.java", "hbc_fixture.js", "verify.py", "requirements.txt")],
         "golden_hex": GOLDEN.hex(),
         "vineflower_artifact": {"url": JAR_URL, "sha256": JAR_SHA256},
         "expected_main": "25", "expected_branches": EXPECTED_BRANCHES.splitlines(),
+        "hermes_dec": {"compilers": {str(v): {"url": u, "sha256": d} for v, (u, d) in HERMESC.items()},
+                       "hbc_sha256": {str(v): d for v, d in hbc_digests.items()},
+                       "original_output": HBC_ORIGINAL_OUTPUT, "pseudocode_output": HBC_PSEUDOCODE_OUTPUT},
     }
 
 

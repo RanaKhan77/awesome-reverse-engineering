@@ -1,8 +1,8 @@
-# Four bounded resource examples
+# Five bounded resource examples
 
-These self-authored fixtures demonstrate Construct, Scapy, YARA-X, and Vineflower. They are small selection examples, not upstream test suites or evidence of full platform/version support.
+These self-authored fixtures demonstrate Construct, Scapy, YARA-X, Vineflower, and hermes-dec. They are small selection examples, not upstream test suites or evidence of full platform/version support.
 
-Use Python 3.11 with `venv`/`pip` support, JDK 17, and an Internet connection for the pinned packages and JAR. From the repository root:
+Use Python 3.11 with `venv`/`pip` support, JDK 17, Node.js, and an Internet connection for the pinned packages, JAR, and Hermes compilers. From the repository root:
 
 ```bash
 resource_examples_dir="$(mktemp -d)"
@@ -11,7 +11,7 @@ python3.11 -m venv "$resource_examples_dir/venv"
 "$resource_examples_dir/venv/bin/python" examples/resource-intake/verify.py --output "$resource_examples_dir/results"
 ```
 
-The runner downloads [Vineflower 1.12.0](https://github.com/Vineflower/vineflower/releases/tag/1.12.0) and checks the JAR SHA-256 before executing it. An existing JAR can be supplied with `--vineflower-jar /path/to/vineflower-1.12.0.jar`; the same digest check still applies. Failed assertions or commands fail the run; a successful run writes `results.json` and retains generated artifacts in a unique directory under the selected output path.
+The runner downloads [Vineflower 1.12.0](https://github.com/Vineflower/vineflower/releases/tag/1.12.0) and two `hermes-compiler` npm tarballs, and checks each SHA-256 before executing anything from them. An existing JAR can be supplied with `--vineflower-jar /path/to/vineflower-1.12.0.jar`; the same digest check still applies. Failed assertions or commands fail the run; a successful run writes `results.json` and retains generated artifacts in a unique directory under the selected output path.
 
 | Resource / pinned version | Input and independent expected result | Scope |
 | --- | --- | --- |
@@ -19,6 +19,7 @@ The runner downloads [Vineflower 1.12.0](https://github.com/Vineflower/vineflowe
 | Scapy 2.8.0 | Known Ethernet/IP/UDP fields and `trace` payload; independent IP/UDP checksum checks; PCAP write/read | Offline packets only, no transmission or live capture |
 | YARA-X 1.21.0 | Self-authored rule matches the golden bytes and not `negative sample`; unescaped `{` in a regex produces `CompileError` | Python API and this documented regex difference, not all YARA rules/modules |
 | Vineflower 1.12.0 | Java 17 record and switch expression; compile → decompile → rebuild; main prints `25`, five branch vectors match explicit expected values | This fixture only, no obfuscation or other Java target versions |
+| hermes-dec 0.1.8 | [`hbc_fixture.js`](hbc_fixture.js) compiled by `hermes-compiler` 250829098.0.19 (HBC 98) and 260318099.0.4 (HBC 99) at `-g0` and `-g1`; header version, disassembly, and pseudo-code landmarks (function names, strings, `<Mod>`, constant `7`) | See the limits below |
 
 The branch oracle for `Probe.java` is:
 
@@ -30,6 +31,12 @@ The branch oracle for `Probe.java` is:
 9:-1
 ```
 
-The [dated local result](verified.json) records host/tool versions, input hashes, artifact digest, and the tested scope. CI repeats the examples and uploads current results through the [resource-example workflow](../../.github/workflows/resource-examples.yml). The current job uses Linux, Python 3.11, and Java 17; it makes no Windows, macOS, hardware, or other-version claim.
+The hermes-dec check also records three limits:
+
+- `hbc-file-parser` warns that HBC 98 and 99 are not formally supported.
+- With `-g1` location info, `hbc-file-parser` prints the header and then raises a `TypeError` in `debug_info_parser.py`; `-g0` files parse cleanly. The disassembler and decompiler succeed at both levels.
+- The original fixture prints `even:negative:25` under Node.js; executing the pseudo-code prints `even:negative:21`, because register variables are shared across functions instead of being local to each call.
+
+The [dated local result](verified.json) records host/tool versions, input hashes, artifact digests, and the tested scope; it was produced in a Linux x86_64 container. CI repeats the examples and uploads current results through the [resource-example workflow](../../.github/workflows/resource-examples.yml). The current job uses Linux, Python 3.11, Java 17, and Node.js 22; it makes no Windows, macOS, hardware, or other-version claim.
 
 See the [candidate review](../../docs/priority-candidates.md) for primary sources, documented requirements, and the nineteen entries without execution verification.

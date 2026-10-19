@@ -64,3 +64,13 @@ Reviewed on **2026-10-13 UTC**; recheck by **2026-11-13**, or earlier if an upst
 | WinDbg MCP: [setup](https://learn.microsoft.com/en-us/windows-hardware/drivers/debuggercmds/set-up-windbg-mcp) · [overview](https://learn.microsoft.com/en-us/windows-hardware/drivers/debuggercmds/windbg-mcp-overview) | Built into WinDbg 1.2610.1001.0+. Official clients are VS Code with GitHub Copilot and GitHub Copilot CLI; other clients use best-effort custom configuration. Only one active MCP client can connect to each WinDbg session. Protected operations require permitted MCP sampling for cross-prompt injection checks. No Windows target or client was tested here. |
 
 For subsequent reviews, confirm the exact host, target, board/backend, distribution channel, and license/edition before widening claims. An archived repository or old reference can remain useful; deprecation and unsupported installation routes require a human decision rather than automatic deletion.
+
+## Conditional-candidate checks
+
+Checked on **2026-10-19 UTC**; recheck by **2026-11-19**. Issue #6 lists hermes-dec among the conditional candidates whose HBC 98/99 opcode modules needed fixture tests before use beyond Hermit's HBC 94/95/96. The fixture, commands, and dated report are in [the examples](../examples/resource-intake/README.md); **reproduced (CI)** means the check runs in the resource-example workflow.
+
+| Candidate / primary evidence | Result and decision |
+| --- | --- |
+| hermes-dec: [README](https://raw.githubusercontent.com/P1sec/hermes-dec/2e796663e1fedb93dca51060797ebf3327b3fedb/README.md) | **Reproduced (CI), added to Language runtimes and packagers.** HBC 98 and 99 fixtures from pinned `hermes-compiler` builds parse, disassemble, and decompile with function names, strings, and branches intact, but with an unsupported-version warning. With `-g1` debug info, `hbc-file-parser` raises a `TypeError` after printing the header. The pseudo-code is not runnable JavaScript: executing it prints `21` where the original prints `25`, because registers are shared across functions. Release 0.1.8 (2026-10-15) is newer than the 2026-10-13 research snapshot. AGPL-3.0-or-later. |
+
+The machine-readable record is under `conditional_checks` in [the JSON snapshot](priority-candidates.json). The other conditional candidates remain in issue #6.

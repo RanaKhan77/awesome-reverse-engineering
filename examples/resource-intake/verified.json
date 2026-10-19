@@ -1,9 +1,10 @@
 {
-  "checked_at": "2026-10-13T02:59:07.191970+00:00",
+  "checked_at": "2026-10-19T22:10:54.983326+00:00",
   "host": {
-    "platform": "Linux-6.1.0-53-cloud-amd64-x86_64-with-glibc2.36",
-    "python": "3.11.2",
-    "javac": "javac 17.0.20.1"
+    "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.36",
+    "python": "3.11.17",
+    "javac": "javac 17.0.20.1",
+    "node": "v22.23.3"
   },
   "results": [
     {
@@ -29,6 +30,12 @@
       "version": "1.12.0",
       "result": "passed",
       "scope": "Java 17 record/switch expression, rebuild, main output and five branch vectors"
+    },
+    {
+      "name": "hermes-dec",
+      "version": "0.1.8",
+      "result": "passed",
+      "scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25"
     }
   ],
   "inputs": [
@@ -41,12 +48,16 @@
       "sha256": "efecf11dc98b876125987476835805989b2fa2f6b52b722b695d7711169fe67a"
     },
     {
+      "path": "hbc_fixture.js",
+      "sha256": "6d05b997536ea5fd52722a966f8a0575959eb2723d6a829c184f1f8464a2f6ad"
+    },
+    {
       "path": "verify.py",
-      "sha256": "a25cf9c230b8e0d2016d225ff2b8abbf461883f1102df3b9ab5cdcd4e9f3f93e"
+      "sha256": "1e3f623356399f1bbc33b2fa9d1bf8131e822db79b8b3f0a97834e6db21ffdcc"
     },
     {
       "path": "requirements.txt",
-      "sha256": "db6df24e77cc6098c67850a1589720247932a58694261684b9351d0a6bc8ede3"
+      "sha256": "ae0f130f9a49f4cb5db23b3717824e9020b1c5b096b0143b65ec58e73ba8b89c"
     }
   ],
   "golden_hex": "534d4b310500017472616365",
@@ -61,5 +72,29 @@
     "1:22",
     "2:22",
     "9:-1"
-  ]
+  ],
+  "hermes_dec": {
+    "compilers": {
+      "98": {
+        "url": "https://registry.npmjs.org/hermes-compiler/-/hermes-compiler-250829098.0.19.tgz",
+        "sha256": "839af099f0926b5ebbd738ba54764a3f40e35dfc3aac91babf56f8eb7c69280e"
+      },
+      "99": {
+        "url": "https://registry.npmjs.org/hermes-compiler/-/hermes-compiler-260318099.0.4.tgz",
+        "sha256": "613b6230cf796bd1b6a8248e2cf8fb2799a5be92d23d49e96ee0b68dc2bfdcf2"
+      }
+    },
+    "hbc_sha256": {
+      "98": {
+        "g0": "d1ceacc1f40097b798abf4eeaf8f2f0a663afa9ed8d8fdd5f2b2d99ee2e422a8",
+        "g1": "d5f33936891fdc73684e9440c6898ba9a346813b4d95d3a89a484df3b1aae668"
+      },
+      "99": {
+        "g0": "f51e55203c85ab6fd016ab83862f81aa61cc2f441087c10ef712c2148bf7b57d",
+        "g1": "1aee0a677f150b400ad20900e3782a084c2e2177ef68a6bb8360e735d65629c3"
+      }
+    },
+    "original_output": "even:negative:25",
+    "pseudocode_output": "even:negative:21"
+  }
 }
