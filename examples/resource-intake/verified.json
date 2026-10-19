@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-13T02:59:07.191970+00:00",
+  "checked_at": "2026-10-19T21:51:28.521712+00:00",
   "host": {
-    "platform": "Linux-6.1.0-53-cloud-amd64-x86_64-with-glibc2.36",
-    "python": "3.11.2",
+    "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.36",
+    "python": "3.11.17",
     "javac": "javac 17.0.20.1"
   },
   "results": [
@@ -29,6 +29,12 @@
       "version": "1.12.0",
       "result": "passed",
       "scope": "Java 17 record/switch expression, rebuild, main output and five branch vectors"
+    },
+    {
+      "name": "Malduck",
+      "version": "4.4.1",
+      "result": "passed",
+      "scope": "Self-authored YARA-triggered extractor and RC4 config; wrong-key and no-marker samples yield no config"
     }
   ],
   "inputs": [
@@ -41,12 +47,20 @@
       "sha256": "efecf11dc98b876125987476835805989b2fa2f6b52b722b695d7711169fe67a"
     },
     {
+      "path": "malduck_modules/duckcfg/__init__.py",
+      "sha256": "21ec275a54f2a24121648e37f6a75c69d528a3498c34179e0ef2f6634b50fb8a"
+    },
+    {
+      "path": "malduck_modules/duckcfg/duckcfg.yar",
+      "sha256": "7b36aaf95fad7f8544eb87962b61277d383ce616d43fd880c3ee4f74a9001581"
+    },
+    {
       "path": "verify.py",
-      "sha256": "a25cf9c230b8e0d2016d225ff2b8abbf461883f1102df3b9ab5cdcd4e9f3f93e"
+      "sha256": "fcd9e83f2d18fc595296f193acd3fcdd23b104727361411d16a63c0ffdad6990"
     },
     {
       "path": "requirements.txt",
-      "sha256": "db6df24e77cc6098c67850a1589720247932a58694261684b9351d0a6bc8ede3"
+      "sha256": "59e3114feda99afa36dfc0ca42d9f31660e5ddb6b6bddb2c1fb8ed0c821d85b0"
     }
   ],
   "golden_hex": "534d4b310500017472616365",
@@ -61,5 +75,17 @@
     "1:22",
     "2:22",
     "9:-1"
-  ]
+  ],
+  "malduck": {
+    "sample_sha256": "23366aee6b6831f13d37926ab773ef0319f6fb36be3295ca778d5858da3af2e3",
+    "expected_config": {
+      "family": "duckcfg",
+      "urls": [
+        "http://192.0.2.10/gate",
+        "http://198.51.100.7/gate"
+      ],
+      "campaign": "trace-7",
+      "sleep": 300
+    }
+  }
 }

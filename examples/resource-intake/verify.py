@@ -1,4 +1,4 @@
-"""Reproduce four narrow resource examples with independent expected outputs."""
+"""Reproduce five narrow resource examples with independent expected outputs."""
 import argparse
 from datetime import datetime, timezone
 import hashlib
@@ -14,12 +14,16 @@ from urllib.request import urlopen
 from construct import Byte, Bytes, Const, ConstructError, Int16ul, Struct, Terminated
 from scapy.all import Ether, IP, Raw, UDP, rdpcap, wrpcap
 import yara_x
+from malduck.extractor import ExtractManager, ExtractorModules
 
 SOURCE = Path(__file__).resolve().parent
 JAR_URL = "https://github.com/Vineflower/vineflower/releases/download/1.12.0/vineflower-1.12.0.jar"
 JAR_SHA256 = "1dfcfe974395734fa467ce620661c7623d05ba83670de0529b1fbd63ff548b9d"
 GOLDEN = bytes.fromhex("534d4b310500017472616365")
 EXPECTED_BRANCHES = "-1:-1\n0:11\n1:22\n2:22\n9:-1"
+DUCK_KEY = b"duck-key"
+DUCK_PLAIN = b"c2=http://192.0.2.10/gate;c2=http://198.51.100.7/gate;campaign=trace-7;sleep=300"
+DUCK_CONFIG = {"family": "duckcfg", "urls": ["http://192.0.2.10/gate", "http://198.51.100.7/gate"], "campaign": "trace-7", "sleep": 300}
 
 
 def sha256(path):
@@ -41,8 +45,41 @@ def run(*args):
     return completed.stdout.strip()
 
 
+def rc4(key, data):
+    """Independent RC4 used only to build the Malduck fixture."""
+    state, j = list(range(256)), 0
+    for i in range(256):
+        j = (j + state[i] + key[i % len(key)]) & 0xFF
+        state[i], state[j] = state[j], state[i]
+    i = j = 0
+    out = bytearray()
+    for byte in data:
+        i = (i + 1) & 0xFF
+        j = (j + state[i]) & 0xFF
+        state[i], state[j] = state[j], state[i]
+        out.append(byte ^ state[(state[i] + state[j]) & 0xFF])
+    return bytes(out)
+
+
+def duck_sample(key=DUCK_KEY, marker=b"DKCFG1"):
+    return b"\x00" * 64 + marker + DUCK_KEY + struct.pack("<H", len(DUCK_PLAIN)) + rc4(key, DUCK_PLAIN) + b"\x00" * 32
+
+
+def verify_malduck(work):
+    modules = ExtractorModules(str(SOURCE / "malduck_modules"))
+    results = {}
+    for name, data in {"good": duck_sample(), "wrong-key": duck_sample(key=b"bad-key!"), "no-marker": duck_sample(marker=b"XXXXXX")}.items():
+        path = work / f"duckcfg-{name}.bin"
+        path.write_bytes(data)
+        manager = ExtractManager(modules)
+        results[name] = (manager.push_file(str(path)), manager.config)
+    assert results["good"] == ("duckcfg", [DUCK_CONFIG]), results["good"]
+    assert results["wrong-key"] == (None, []) and results["no-marker"] == (None, [])
+    return sha256(work / "duckcfg-good.bin")
+
+
 def verify(work, jar):
-    for package, expected in {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0"}.items():
+    for package, expected in {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "malduck": "4.4.1"}.items():
         assert version(package) == expected, f"Unexpected {package} version"
 
     schema = Struct(
@@ -104,6 +141,8 @@ def verify(work, jar):
         assert run("java", "-cp", str(classes), "BranchDemo") == "25"
         assert run("java", "-cp", str(classes), "Probe") == EXPECTED_BRANCHES
 
+    duck_digest = verify_malduck(work)
+
     return {
         "checked_at": datetime.now(timezone.utc).isoformat(),
         "host": {"platform": platform.platform(), "python": platform.python_version(), "javac": run("javac", "-version")},
@@ -112,11 +151,15 @@ def verify(work, jar):
             {"name": "Scapy", "version": "2.8.0", "result": "passed", "scope": "Offline packet/PCAP round trip and independent IP/UDP checksums; no traffic sent"},
             {"name": "YARA-X", "version": "1.21.0", "result": "passed", "scope": "Python API positive/negative matching and strict-regex CompileError"},
             {"name": "Vineflower", "version": "1.12.0", "result": "passed", "scope": "Java 17 record/switch expression, rebuild, main output and five branch vectors"},
+            {"name": "Malduck", "version": "4.4.1", "result": "passed", "scope": "Self-authored YARA-triggered extractor and RC4 config; wrong-key and no-marker samples yield no config"},
         ],
-        "inputs": [{"path": name, "sha256": sha256(SOURCE / name)} for name in ("BranchDemo.java", "Probe.java", "verify.py", "requirements.txt")],
+        "inputs": [{"path": name, "sha256": sha256(SOURCE / name)} for name in (
+            "BranchDemo.java", "Probe.java", "malduck_modules/duckcfg/__init__.py",
+            "malduck_modules/duckcfg/duckcfg.yar", "verify.py", "requirements.txt")],
         "golden_hex": GOLDEN.hex(),
         "vineflower_artifact": {"url": JAR_URL, "sha256": JAR_SHA256},
         "expected_main": "25", "expected_branches": EXPECTED_BRANCHES.splitlines(),
+        "malduck": {"sample_sha256": duck_digest, "expected_config": DUCK_CONFIG},
     }
 
 
