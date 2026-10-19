@@ -72,7 +72,7 @@ def verify_hermes_dec(work):
     digests = {}
     for bytecode_version in HERMESC:
         compiler = hermesc(work, bytecode_version)
-        bare, hbc, hasm, pseudo = [work / f"fixture-{bytecode_version}{ext}" for ext in ("-g0.hbc", "-g1.hbc", ".hasm", ".js")]
+        bare, hbc = [work / f"fixture-{bytecode_version}-{level}.hbc" for level in ("g0", "g1")]
         for level, output in (("-g0", bare), ("-g1", hbc)):
             run(str(compiler), "-emit-binary", level, "-out", str(output), str(SOURCE / "hbc_fixture.js"))
             assert output.read_bytes()[8] == bytecode_version, "Unexpected HBC header version"
@@ -83,15 +83,17 @@ def verify_hermes_dec(work):
         parsed = subprocess.run([str(tools / "hbc-file-parser"), str(hbc)], text=True, capture_output=True)
         assert parsed.returncode == 1 and f"| Version                      | {bytecode_version}" in parsed.stdout
         assert "debug_info_parser.py" in parsed.stderr and "TypeError" in parsed.stderr
-        run(str(tools / "hbc-disassembler"), str(hbc), str(hasm))
-        run(str(tools / "hbc-decompiler"), str(hbc), str(pseudo))
-        listing, code = hasm.read_text(), pseudo.read_text()
-        for needle in ('Function #1 "classify"', 'Function #2 "scaled"', "<Mod>", "'hbc-fixture-marker'"):
-            assert needle in listing, needle
-        for needle in ("// Original name: classify", "// Original name: scaled", "'negative'", "'zero'", "'even'", "'odd'", "r0 = 7;"):
-            assert needle in code, needle
-        # The pseudo-code shares register variables across functions, so running it does not reproduce the original.
-        assert run("node", "-e", shim, str(pseudo)) == HBC_PSEUDOCODE_OUTPUT
+        for binary in (bare, hbc):
+            hasm, pseudo = binary.with_suffix(".hasm"), binary.with_suffix(".js")
+            run(str(tools / "hbc-disassembler"), str(binary), str(hasm))
+            run(str(tools / "hbc-decompiler"), str(binary), str(pseudo))
+            listing, code = hasm.read_text(), pseudo.read_text()
+            for needle in ('Function #1 "classify"', 'Function #2 "scaled"', "<Mod>", "'hbc-fixture-marker'"):
+                assert needle in listing, (binary.name, needle)
+            for needle in ("// Original name: classify", "// Original name: scaled", "'negative'", "'zero'", "'even'", "'odd'", "r0 = 7;"):
+                assert needle in code, (binary.name, needle)
+            # The pseudo-code shares register variables across functions, so running it does not reproduce the original.
+            assert run("node", "-e", shim, str(pseudo)) == HBC_PSEUDOCODE_OUTPUT, binary.name
         digests[bytecode_version] = {"g0": sha256(bare), "g1": sha256(hbc)}
     return digests
 
