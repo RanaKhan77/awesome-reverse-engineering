@@ -1,9 +1,10 @@
 {
-  "checked_at": "2026-10-20T14:12:14.196481+00:00",
+  "checked_at": "2026-10-20T14:20:47.418756+00:00",
   "host": {
     "platform": "Linux-6.1.0-53-cloud-amd64-x86_64-with-glibc2.36",
     "python": "3.11.2",
-    "javac": "javac 17.0.20.1"
+    "javac": "javac 17.0.20.1",
+    "node": "v24.21.0"
   },
   "results": [
     {
@@ -35,6 +36,12 @@
       "version": "4.4.1",
       "result": "passed",
       "scope": "Self-authored YARA-triggered extractor and RC4 config; wrong-key and no-marker samples yield no config"
+    },
+    {
+      "name": "hermes-dec",
+      "version": "0.1.8",
+      "result": "passed",
+      "scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25"
     }
   ],
   "inputs": [
@@ -47,6 +54,10 @@
       "sha256": "efecf11dc98b876125987476835805989b2fa2f6b52b722b695d7711169fe67a"
     },
     {
+      "path": "hbc_fixture.js",
+      "sha256": "6d05b997536ea5fd52722a966f8a0575959eb2723d6a829c184f1f8464a2f6ad"
+    },
+    {
       "path": "malduck_modules/duckcfg/__init__.py",
       "sha256": "21ec275a54f2a24121648e37f6a75c69d528a3498c34179e0ef2f6634b50fb8a"
     },
@@ -56,11 +67,11 @@
     },
     {
       "path": "verify.py",
-      "sha256": "080c2c3bfcf8a4186003af68d29f41b50deae3facba45be1d1cb5fc0c02d6bfb"
+      "sha256": "1d06631607af8e9cfd8c0f85e55792dd1e672b2c00f75cbaaf772511e50d9b09"
     },
     {
       "path": "requirements.txt",
-      "sha256": "59e3114feda99afa36dfc0ca42d9f31660e5ddb6b6bddb2c1fb8ed0c821d85b0"
+      "sha256": "e82f3a0ec8e0920c97b12fc63d92cfe34c898c2999ac70c6dba931ea21ac8d05"
     }
   ],
   "golden_hex": "534d4b310500017472616365",
@@ -87,5 +98,29 @@
       "campaign": "trace-7",
       "sleep": 300
     }
+  },
+  "hermes_dec": {
+    "compilers": {
+      "98": {
+        "url": "https://registry.npmjs.org/hermes-compiler/-/hermes-compiler-250829098.0.19.tgz",
+        "sha256": "839af099f0926b5ebbd738ba54764a3f40e35dfc3aac91babf56f8eb7c69280e"
+      },
+      "99": {
+        "url": "https://registry.npmjs.org/hermes-compiler/-/hermes-compiler-260318099.0.4.tgz",
+        "sha256": "613b6230cf796bd1b6a8248e2cf8fb2799a5be92d23d49e96ee0b68dc2bfdcf2"
+      }
+    },
+    "hbc_sha256": {
+      "98": {
+        "g0": "d1ceacc1f40097b798abf4eeaf8f2f0a663afa9ed8d8fdd5f2b2d99ee2e422a8",
+        "g1": "607bacb57bde59047aacfc9831c2d4a0d2a39812b77e4e99c7b1d2f296c423ad"
+      },
+      "99": {
+        "g0": "f51e55203c85ab6fd016ab83862f81aa61cc2f441087c10ef712c2148bf7b57d",
+        "g1": "1435f40bec256fc1c62fd79135400157449ed18ef804cedd1f2437c04916174e"
+      }
+    },
+    "original_output": "even:negative:25",
+    "pseudocode_output": "even:negative:21"
   }
 }

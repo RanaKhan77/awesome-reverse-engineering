@@ -246,7 +246,7 @@
       "evidence_type": "documented",
       "task": "Unity assets and dependencies",
       "incremental_value": "Complements Cpp2IL/Il2CppDumper code and metadata analysis with asset inspection and export.",
-      "constraints": "The README claims Unity 3.5.0\u20136000.4.X, with varying support quality. The GPL-3.0 base and paid Premium features must be distinguished.",
+      "constraints": "The README claims Unity 3.5.0–6000.4.X, with varying support quality. The GPL-3.0 base and paid Premium features must be distinguished.",
       "next_check": "Export a self-built Unity project and compare assets and references against the original.",
       "sources": [
         "https://raw.githubusercontent.com/AssetRipper/AssetRipper/beeb50ee1c223e856c860caa338e5309404956a3/README.md",
@@ -748,6 +748,38 @@
     }
   ],
   "conditional_checks": [
+    {
+      "name": "hermes-dec",
+      "url": "https://github.com/P1sec/hermes-dec",
+      "section": "Language runtimes and packagers",
+      "description": "Parses, disassembles, and decompiles React Native Hermes bytecode into register-based pseudo-code that is not runnable JavaScript; HBC 98 and 99 load with an unsupported-version warning.",
+      "research_priority": "B",
+      "decision": "added",
+      "checked_at": "2026-10-19",
+      "next_review": "2026-11-19",
+      "evidence_type": "reproduced (CI)",
+      "task": "Hermes bytecode version coverage",
+      "constraints": "HBC 98/99 warn as not formally supported; hbc-file-parser raises TypeError on -g1 debug info; executing the pseudo-code prints 21 instead of 25 because registers are shared across functions.",
+      "sources": [
+        "https://raw.githubusercontent.com/P1sec/hermes-dec/2e796663e1fedb93dca51060797ebf3327b3fedb/README.md"
+      ],
+      "source_commit": "2e796663e1fedb93dca51060797ebf3327b3fedb",
+      "license_api": "AGPL-3.0",
+      "license_api_is_complete_audit": false,
+      "canonical_repo": "P1sec/hermes-dec",
+      "archived": false,
+      "default_branch_commit_at": "2026-10-15T06:46:27Z",
+      "github_release": {
+        "tag_name": "0.1.8",
+        "published_at": "2026-10-15T06:49:35Z",
+        "html_url": "https://github.com/P1sec/hermes-dec/releases/tag/0.1.8"
+      },
+      "reproduction": "examples/resource-intake/README.md",
+      "reproduced_scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25",
+      "source_browser_urls": [
+        "https://github.com/P1sec/hermes-dec/blob/2e796663e1fedb93dca51060797ebf3327b3fedb/README.md"
+      ]
+    },
     {
       "name": "Malduck",
       "url": "https://github.com/CERT-Polska/malduck",

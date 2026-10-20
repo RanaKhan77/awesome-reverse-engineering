@@ -1,10 +1,13 @@
 """Prerequisite diagnostics must work without third-party Python packages."""
 import importlib.util
+import hashlib
+import io
 from importlib.metadata import PackageNotFoundError
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import tarfile
 import unittest
 from unittest.mock import patch
 
@@ -63,6 +66,26 @@ class Prerequisites(unittest.TestCase):
             with self.subTest(failure=type(failure).__name__), patch.object(verifier.subprocess, "run", side_effect=failure):
                 with self.assertRaisesRegex(SystemExit, "Install JDK 17"):
                     verifier.require_java("java")
+
+    def test_windows_hermes_compiler_keeps_required_runtime_dlls(self):
+        archive = io.BytesIO()
+        with tarfile.open(fileobj=archive, mode="w:gz") as tar:
+            for name, data in [("hermesc.exe", b"compiler"), ("icuuc64.dll", b"runtime")]:
+                member = tarfile.TarInfo("package/hermesc/win64-bin/" + name)
+                member.size = len(data)
+                tar.addfile(member, io.BytesIO(data))
+        data = archive.getvalue()
+        with tempfile.TemporaryDirectory() as output, patch.object(verifier.platform, "system", return_value="Windows"), patch.object(verifier.platform, "machine", return_value="AMD64"), patch.object(verifier, "urlopen", return_value=io.BytesIO(data)), patch.object(verifier, "HERMESC", {98: ("https://example.test/compiler", hashlib.sha256(data).hexdigest())}):
+            compiler = verifier.hermesc(Path(output), 98)
+            self.assertEqual(compiler.name, "hermesc.exe")
+            self.assertEqual(compiler.read_bytes(), b"compiler")
+            self.assertEqual((compiler.parent / "icuuc64.dll").read_bytes(), b"runtime")
+
+    def test_unsupported_hermes_host_exits_before_downloading(self):
+        with patch.object(verifier.platform, "system", return_value="Linux"), patch.object(verifier.platform, "machine", return_value="aarch64"), patch.object(verifier, "urlopen") as download:
+            with self.assertRaisesRegex(SystemExit, "pinned Hermes compilers require"):
+                verifier.hermesc(Path("unused"), 98)
+            download.assert_not_called()
 
 
 if __name__ == "__main__":
