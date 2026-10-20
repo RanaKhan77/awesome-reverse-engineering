@@ -7,12 +7,14 @@ on:
       - 'README.md'
       - 'docs/priority-candidates.*'
       - 'examples/resource-intake/**'
+      - 'tests/test_resource_prerequisites.py'
       - '.github/workflows/resource-examples.yml'
   pull_request:
     paths:
       - 'README.md'
       - 'docs/priority-candidates.*'
       - 'examples/resource-intake/**'
+      - 'tests/test_resource_prerequisites.py'
       - '.github/workflows/resource-examples.yml'
   workflow_dispatch:
 
