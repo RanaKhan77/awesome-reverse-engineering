@@ -2,11 +2,12 @@
 import argparse
 from datetime import datetime, timezone
 import hashlib
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 import io
 import json
 from pathlib import Path
 import platform
+import re
 import struct
 import subprocess
 import sys
@@ -14,9 +15,6 @@ import tarfile
 import tempfile
 from urllib.request import urlopen
 
-from construct import Byte, Bytes, Const, ConstructError, Int16ul, Struct, Terminated
-from scapy.all import Ether, IP, Raw, UDP, rdpcap, wrpcap
-import yara_x
 
 SOURCE = Path(__file__).resolve().parent
 JAR_URL = "https://github.com/Vineflower/vineflower/releases/download/1.12.0/vineflower-1.12.0.jar"
@@ -53,20 +51,30 @@ def run(*args):
 
 
 def hermesc(work, bytecode_version):
+    hosts = {"Linux": "linux64-bin", "Darwin": "osx-bin", "Windows": "win64-bin"}
+    system = platform.system()
+    if system not in hosts or (system != "Darwin" and platform.machine().lower() not in ("x86_64", "amd64")):
+        raise SystemExit("The pinned Hermes compilers require Linux/Windows x86-64 or macOS x86-64/arm64.")
     url, digest = HERMESC[bytecode_version]
     with urlopen(url, timeout=120) as response:
         archive = response.read()
     assert hashlib.sha256(archive).hexdigest() == digest, f"hermes-compiler {bytecode_version} digest mismatch"
-    member = {"Linux": "package/hermesc/linux64-bin/hermesc", "Darwin": "package/hermesc/osx-bin/hermesc"}[platform.system()]
-    target = work / f"hermesc-{bytecode_version}"
+    prefix = Path("package/hermesc") / hosts[system]
+    directory = work / f"hermesc-{bytecode_version}"
+    directory.mkdir()
+    target = directory / ("hermesc.exe" if system == "Windows" else "hermesc")
     with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
-        target.write_bytes(tar.extractfile(member).read())
+        # Windows needs the runtime DLLs beside hermesc.exe, not just the executable.
+        for member in tar.getmembers():
+            if member.isfile() and Path(member.name).parent == prefix:
+                (directory / Path(member.name).name).write_bytes(tar.extractfile(member).read())
     target.chmod(0o755)
     return target
 
 
 def verify_hermes_dec(work):
     tools = Path(sys.executable).parent
+    suffix = ".exe" if platform.system() == "Windows" else ""
     shim = "globalThis.print = console.log; new Function(require('fs').readFileSync(process.argv[1], 'utf8'))();"
     assert run("node", "-e", shim, str(SOURCE / "hbc_fixture.js")) == HBC_ORIGINAL_OUTPUT
     digests = {}
@@ -76,17 +84,17 @@ def verify_hermes_dec(work):
         for level, output in (("-g0", bare), ("-g1", hbc)):
             run(str(compiler), "-emit-binary", level, "-out", str(output), str(SOURCE / "hbc_fixture.js"))
             assert output.read_bytes()[8] == bytecode_version, "Unexpected HBC header version"
-        parsed = subprocess.run([str(tools / "hbc-file-parser"), str(bare)], text=True, capture_output=True, check=True)
+        parsed = subprocess.run([str(tools / ("hbc-file-parser" + suffix)), str(bare)], text=True, capture_output=True, check=True)
         assert f"| Version                      | {bytecode_version}" in parsed.stdout
         assert "not formally supported" in parsed.stderr
         # With backtrace location info (-g1), the header prints but debug-info parsing raises a TypeError.
-        parsed = subprocess.run([str(tools / "hbc-file-parser"), str(hbc)], text=True, capture_output=True)
+        parsed = subprocess.run([str(tools / ("hbc-file-parser" + suffix)), str(hbc)], text=True, capture_output=True)
         assert parsed.returncode == 1 and f"| Version                      | {bytecode_version}" in parsed.stdout
         assert "debug_info_parser.py" in parsed.stderr and "TypeError" in parsed.stderr
         for binary in (bare, hbc):
             hasm, pseudo = binary.with_suffix(".hasm"), binary.with_suffix(".js")
-            run(str(tools / "hbc-disassembler"), str(binary), str(hasm))
-            run(str(tools / "hbc-decompiler"), str(binary), str(pseudo))
+            run(str(tools / ("hbc-disassembler" + suffix)), str(binary), str(hasm))
+            run(str(tools / ("hbc-decompiler" + suffix)), str(binary), str(pseudo))
             listing, code = hasm.read_text(), pseudo.read_text()
             for needle in ('Function #1 "classify"', 'Function #2 "scaled"', "<Mod>", "'hbc-fixture-marker'"):
                 assert needle in listing, (binary.name, needle)
@@ -98,9 +106,42 @@ def verify_hermes_dec(work):
     return digests
 
 
+def require_java(executable):
+    try:
+        completed = subprocess.run([executable, "-version"], text=True, capture_output=True, check=True)
+    except FileNotFoundError as exc:
+        raise SystemExit(
+            f"{executable} was not found. Install JDK 17 or newer and retry."
+        ) from exc
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(f"Cannot query {executable} version. Install JDK 17 or newer and retry.") from exc
+    output = completed.stdout + completed.stderr
+    match = re.search(r'\b(?:javac|(?:openjdk|java)(?:\s+version)?)\s+"?(\d+)(?:\.(\d+))?', output)
+    major = int(match[2] if match and match[1] == "1" and match[2] else match[1]) if match else 0
+    if major < 17:
+        raise SystemExit(f"{executable} requires JDK 17 or newer; found {output.strip() or 'an unknown version'}.")
+
 def verify(work, jar):
     for package, expected in {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8"}.items():
-        assert version(package) == expected, f"Unexpected {package} version"
+        try:
+            installed = version(package)
+        except PackageNotFoundError as exc:
+            raise SystemExit(
+                f'Missing Python dependency: {package}. Install with `"{sys.executable}" -m pip install -r "{SOURCE / "requirements.txt"}"`.'
+            ) from exc
+        if installed != expected:
+            raise SystemExit(f"Expected {package}=={expected}, found {installed}. Install the pinned requirements from {SOURCE / 'requirements.txt'}.")
+
+    require_java("javac")
+    require_java("java")
+    try:
+        run("node", "--version")
+    except (FileNotFoundError, subprocess.CalledProcessError) as exc:
+        raise SystemExit("Node.js is required for the Hermes fixture; install Node.js 22 LTS and retry.") from exc
+
+    from construct import Byte, Bytes, Const, ConstructError, Int16ul, Struct, Terminated
+    from scapy.all import Ether, IP, Raw, UDP, rdpcap, wrpcap
+    import yara_x
 
     schema = Struct(
         "magic" / Const(b"SMK1"), "length" / Int16ul, "kind" / Byte,
