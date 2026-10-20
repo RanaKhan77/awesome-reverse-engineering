@@ -128,6 +128,7 @@ Run samples only in isolated, disposable environments, and follow your organizat
 
 - [CAPE Sandbox](https://github.com/kevoreilly/CAPEv2) - Automated sandbox derived from Cuckoo that runs samples in virtual machines and records behavior, unpacked payloads, and malware configurations.
 - [FLARE-VM](https://github.com/mandiant/flare-vm) - Installation scripts that turn a Windows virtual machine into a malware-analysis and reverse-engineering workstation.
+- [mwemu](https://github.com/mwemuorg/mwemu) - Emulates x86/x64 and AArch64 code for PE, ELF, and Mach-O investigations, with Windows API models and kernel-driver memory-lifetime checks; Windows-focused, with growing Linux/macOS support and Rust 1.95+ required to build the reviewed source.
 - [oletools](https://github.com/decalage2/oletools) - Python tools for inspecting Office, OLE, and RTF files and extracting macros, embedded objects, and other document artifacts.
 - [PE-sieve](https://github.com/hasherezade/pe-sieve) - Scans a running process for injected or modified code, such as hollowed modules, hooks, and shellcode, and dumps what it finds.
 - [REMnux](https://remnux.org/) - Linux toolkit for analyzing malicious executables, documents, scripts, and network traffic, available as a virtual machine, container, or installer.
