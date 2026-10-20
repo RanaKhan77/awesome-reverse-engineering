@@ -29,7 +29,7 @@ class Prerequisites(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
 
     def test_all_missing_pinned_packages_are_reported(self):
-        packages = {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0"}
+        packages = dict(line.split("==", 1) for line in (SCRIPT.parent / "requirements.txt").read_text().splitlines() if line and not line.startswith("#"))
         for missing in packages:
             def installed(name):
                 if name == missing:

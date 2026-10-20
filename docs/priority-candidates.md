@@ -64,3 +64,13 @@ Reviewed on **2026-10-13 UTC**; recheck by **2026-11-13**, or earlier if an upst
 | WinDbg MCP: [setup](https://learn.microsoft.com/en-us/windows-hardware/drivers/debuggercmds/set-up-windbg-mcp) · [overview](https://learn.microsoft.com/en-us/windows-hardware/drivers/debuggercmds/windbg-mcp-overview) | Built into WinDbg 1.2610.1001.0+. Official clients are VS Code with GitHub Copilot and GitHub Copilot CLI; other clients use best-effort custom configuration. Only one active MCP client can connect to each WinDbg session. Protected operations require permitted MCP sampling for cross-prompt injection checks. No Windows target or client was tested here. |
 
 For subsequent reviews, confirm the exact host, target, board/backend, distribution channel, and license/edition before widening claims. An archived repository or old reference can remain useful; deprecation and unsupported installation routes require a human decision rather than automatic deletion.
+
+## Conditional-candidate checks
+
+Checked on **2026-10-19 UTC**; recheck by **2026-11-19**. Issue #6 lists Malduck among the conditional candidates that need a self-authored extractor and a known encrypted configuration. The fixture, commands, and dated report are in [the examples](../examples/resource-intake/README.md); **reproduced (CI)** means the check runs in the resource-example workflow.
+
+| Candidate / primary evidence | Result and decision |
+| --- | --- |
+| Malduck: [README](https://raw.githubusercontent.com/CERT-Polska/malduck/0425e0209ec30b656e75ff94071e01c34c4cffa5/README.md) | **Reproduced (CI), added to Malware analysis.** A self-authored YARA-triggered extractor recovered an RC4-encrypted config built by an independent RC4 implementation; wrong-key and no-marker samples yielded nothing. Malduck supplies primitives and the extraction framework, not family extractors. Latest release v4.4.1 (2024-05-10); default branch last changed 2025-06-22. GPL-3.0. |
+
+The machine-readable record is under `conditional_checks` in [the JSON snapshot](priority-candidates.json). The other conditional candidates remain in issue #6.
