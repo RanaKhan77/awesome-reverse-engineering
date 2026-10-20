@@ -6,14 +6,12 @@ from importlib.metadata import PackageNotFoundError, version
 import json
 from pathlib import Path
 import platform
+import re
 import struct
 import subprocess
+import sys
 import tempfile
 from urllib.request import urlopen
-
-from construct import Byte, Bytes, Const, ConstructError, Int16ul, Struct, Terminated
-from scapy.all import Ether, IP, Raw, UDP, rdpcap, wrpcap
-import yara_x
 
 SOURCE = Path(__file__).resolve().parent
 JAR_URL = "https://github.com/Vineflower/vineflower/releases/download/1.12.0/vineflower-1.12.0.jar"
@@ -41,13 +39,20 @@ def run(*args):
     return completed.stdout.strip()
 
 
-def require_command(executable, *args):
+def require_java(executable):
     try:
-        run(executable, *args)
+        completed = subprocess.run([executable, "-version"], text=True, capture_output=True, check=True)
     except FileNotFoundError as exc:
         raise SystemExit(
             f"{executable} was not found. Install JDK 17 or newer and retry."
         ) from exc
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(f"Cannot query {executable} version. Install JDK 17 or newer and retry.") from exc
+    output = completed.stdout + completed.stderr
+    match = re.search(r'\b(?:javac|(?:openjdk|java)(?:\s+version)?)\s+"?(\d+)(?:\.(\d+))?', output)
+    major = int(match[2] if match and match[1] == "1" and match[2] else match[1]) if match else 0
+    if major < 17:
+        raise SystemExit(f"{executable} requires JDK 17 or newer; found {output.strip() or 'an unknown version'}.")
 
 
 def verify(work, jar):
@@ -56,12 +61,17 @@ def verify(work, jar):
             installed = version(package)
         except PackageNotFoundError as exc:
             raise SystemExit(
-                f"Missing Python dependency: {package}. Install it with `python -m pip install -r examples/resource-intake/requirements.txt`."
+                f'Missing Python dependency: {package}. Install with `"{sys.executable}" -m pip install -r "{SOURCE / "requirements.txt"}"`.'
             ) from exc
-        assert installed == expected, f"Unexpected {package} version"
+        if installed != expected:
+            raise SystemExit(f"Expected {package}=={expected}, found {installed}. Install the pinned requirements from {SOURCE / 'requirements.txt'}.")
 
-    require_command("javac", "-version")
-    require_command("java", "-version")
+    require_java("javac")
+    require_java("java")
+
+    from construct import Byte, Bytes, Const, ConstructError, Int16ul, Struct, Terminated
+    from scapy.all import Ether, IP, Raw, UDP, rdpcap, wrpcap
+    import yara_x
 
     schema = Struct(
         "magic" / Const(b"SMK1"), "length" / Int16ul, "kind" / Byte,
