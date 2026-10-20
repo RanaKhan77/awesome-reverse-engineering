@@ -278,6 +278,7 @@ Agent integrations expose existing analysis tools or coordinate an investigation
 See the [list structure and maintenance review](docs/list-review.md) for a dated comparison of 21 general and specialist collections. Recent activity and popularity are assessed separately there.
 
 - [Awesome AI Reverse Engineering](https://github.com/DiscoverBox/awesome-ai-reverse) - AI integrations organized by analysis ecosystem, with English and Chinese editions.
+- [Awesome Cyber Security Heaven](https://github.com/RanaKhan77/awesome-cyber-security-heaven) - Broad cybersecurity directory with reverse-engineering and debugging tools such as Ghidra, radare2, and GDB alongside crackme practice links; individual resources have their own licenses and free-tier restrictions.
 - [Awesome Embedded Security](https://github.com/hexsecs/awesome-embedded-security) - Firmware and hardware tools, learning resources, and repository-health workflows.
 - [Awesome Game File Format Reversing](https://github.com/VelocityRa/awesome-game-file-format-reversing) - Game formats, engines, asset tools, and specialist references.
 - [Awesome REA](https://github.com/kaixinbaba/awesome-rea) - Independent directory of open-source reconstructions, reimplementations, compatibility projects, and REA resources, with dated source reviews, license notes, and known limits.
