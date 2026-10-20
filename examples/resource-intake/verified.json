@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-20T14:13:24.909891+00:00",
+  "checked_at": "2026-10-20T14:20:47.418756+00:00",
   "host": {
     "platform": "Linux-6.1.0-53-cloud-amd64-x86_64-with-glibc2.36",
     "python": "3.11.2",
@@ -32,6 +32,12 @@
       "scope": "Java 17 record/switch expression, rebuild, main output and five branch vectors"
     },
     {
+      "name": "Malduck",
+      "version": "4.4.1",
+      "result": "passed",
+      "scope": "Self-authored YARA-triggered extractor and RC4 config; wrong-key and no-marker samples yield no config"
+    },
+    {
       "name": "hermes-dec",
       "version": "0.1.8",
       "result": "passed",
@@ -52,12 +58,20 @@
       "sha256": "6d05b997536ea5fd52722a966f8a0575959eb2723d6a829c184f1f8464a2f6ad"
     },
     {
+      "path": "malduck_modules/duckcfg/__init__.py",
+      "sha256": "21ec275a54f2a24121648e37f6a75c69d528a3498c34179e0ef2f6634b50fb8a"
+    },
+    {
+      "path": "malduck_modules/duckcfg/duckcfg.yar",
+      "sha256": "7b36aaf95fad7f8544eb87962b61277d383ce616d43fd880c3ee4f74a9001581"
+    },
+    {
       "path": "verify.py",
-      "sha256": "58758bd16994d17190cdcd177e2635c3deabe4deeefb7ad8736637cef7eb1312"
+      "sha256": "1d06631607af8e9cfd8c0f85e55792dd1e672b2c00f75cbaaf772511e50d9b09"
     },
     {
       "path": "requirements.txt",
-      "sha256": "ae0f130f9a49f4cb5db23b3717824e9020b1c5b096b0143b65ec58e73ba8b89c"
+      "sha256": "e82f3a0ec8e0920c97b12fc63d92cfe34c898c2999ac70c6dba931ea21ac8d05"
     }
   ],
   "golden_hex": "534d4b310500017472616365",
@@ -73,6 +87,18 @@
     "2:22",
     "9:-1"
   ],
+  "malduck": {
+    "sample_sha256": "23366aee6b6831f13d37926ab773ef0319f6fb36be3295ca778d5858da3af2e3",
+    "expected_config": {
+      "family": "duckcfg",
+      "urls": [
+        "http://192.0.2.10/gate",
+        "http://198.51.100.7/gate"
+      ],
+      "campaign": "trace-7",
+      "sleep": 300
+    }
+  },
   "hermes_dec": {
     "compilers": {
       "98": {

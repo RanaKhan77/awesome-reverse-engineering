@@ -128,6 +128,8 @@ Run samples only in isolated, disposable environments, and follow your organizat
 
 - [CAPE Sandbox](https://github.com/kevoreilly/CAPEv2) - Automated sandbox derived from Cuckoo that runs samples in virtual machines and records behavior, unpacked payloads, and malware configurations.
 - [FLARE-VM](https://github.com/mandiant/flare-vm) - Installation scripts that turn a Windows virtual machine into a malware-analysis and reverse-engineering workstation.
+- [Malduck](https://github.com/CERT-Polska/malduck) - Python library of cryptography, compression, and memory-model helpers with a YARA-driven framework for writing your own malware configuration extractors; it does not ship family extractors.
+- [mwemu](https://github.com/mwemuorg/mwemu) - Emulates x86/x64 and AArch64 code for PE, ELF, and Mach-O investigations, with Windows API models and kernel-driver memory-lifetime checks; Windows-focused, with growing Linux/macOS support and Rust 1.95+ required to build the reviewed source.
 - [oletools](https://github.com/decalage2/oletools) - Python tools for inspecting Office, OLE, and RTF files and extracting macros, embedded objects, and other document artifacts.
 - [PE-sieve](https://github.com/hasherezade/pe-sieve) - Scans a running process for injected or modified code, such as hollowed modules, hooks, and shellcode, and dumps what it finds.
 - [REMnux](https://remnux.org/) - Linux toolkit for analyzing malicious executables, documents, scripts, and network traffic, available as a virtual machine, container, or installer.
@@ -278,6 +280,7 @@ Agent integrations expose existing analysis tools or coordinate an investigation
 See the [list structure and maintenance review](docs/list-review.md) for a dated comparison of 21 general and specialist collections. Recent activity and popularity are assessed separately there.
 
 - [Awesome AI Reverse Engineering](https://github.com/DiscoverBox/awesome-ai-reverse) - AI integrations organized by analysis ecosystem, with English and Chinese editions.
+- [Awesome Cyber Security Heaven](https://github.com/RanaKhan77/awesome-cyber-security-heaven) - Broad cybersecurity directory with reverse-engineering and debugging tools such as Ghidra, radare2, and GDB alongside crackme practice links; individual resources have their own licenses and free-tier restrictions.
 - [Awesome Embedded Security](https://github.com/hexsecs/awesome-embedded-security) - Firmware and hardware tools, learning resources, and repository-health workflows.
 - [Awesome Game File Format Reversing](https://github.com/VelocityRa/awesome-game-file-format-reversing) - Game formats, engines, asset tools, and specialist references.
 - [Awesome REA](https://github.com/kaixinbaba/awesome-rea) - Independent directory of open-source reconstructions, reimplementations, compatibility projects, and REA resources, with dated source reviews, license notes, and known limits.

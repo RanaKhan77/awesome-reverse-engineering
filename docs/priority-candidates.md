@@ -65,12 +65,11 @@ Reviewed on **2026-10-13 UTC**; recheck by **2026-11-13**, or earlier if an upst
 
 For subsequent reviews, confirm the exact host, target, board/backend, distribution channel, and license/edition before widening claims. An archived repository or old reference can remain useful; deprecation and unsupported installation routes require a human decision rather than automatic deletion.
 
-## Conditional-candidate checks
+## Additional conditional candidates (2026-10-19)
 
-Checked on **2026-10-19 UTC**; recheck by **2026-11-19**. Issue #6 lists hermes-dec among the conditional candidates whose HBC 98/99 opcode modules needed fixture tests before use beyond Hermit's HBC 94/95/96. The fixture, commands, and dated report are in [the examples](../examples/resource-intake/README.md); **reproduced (CI)** means the check runs in the resource-example workflow.
+Checked on **2026-10-19 UTC**; recheck by **2026-11-19**. These address the Malduck extractor and newer Hermes-bytecode items in issue #6. Fixtures, commands and dated results are in [the examples](../examples/resource-intake/README.md); **reproduced (CI)** means the bounded checks run in the resource-example workflow.
 
 | Candidate / primary evidence | Result and decision |
 | --- | --- |
-| hermes-dec: [README](https://raw.githubusercontent.com/P1sec/hermes-dec/2e796663e1fedb93dca51060797ebf3327b3fedb/README.md) | **Reproduced (CI), added to Language runtimes and packagers.** HBC 98 and 99 fixtures from pinned `hermes-compiler` builds parse, disassemble, and decompile with function names, strings, and branches intact, but with an unsupported-version warning. With `-g1` debug info, `hbc-file-parser` raises a `TypeError` after printing the header. The pseudo-code is not runnable JavaScript: executing it prints `21` where the original prints `25`, because registers are shared across functions. Release 0.1.8 (2026-10-15) is newer than the 2026-10-13 research snapshot. AGPL-3.0-or-later. |
-
-The machine-readable record is under `conditional_checks` in [the JSON snapshot](priority-candidates.json). The other conditional candidates remain in issue #6.
+| Malduck: [README](https://raw.githubusercontent.com/CERT-Polska/malduck/0425e0209ec30b656e75ff94071e01c34c4cffa5/README.md) | **Reproduced (CI), added to Malware analysis.** A self-authored YARA-triggered extractor recovered an RC4-encrypted config built by an independent RC4 implementation; wrong-key and no-marker samples yielded nothing. Malduck supplies primitives and the extraction framework, not family extractors. Latest release v4.4.1 (2024-05-10); default branch last changed 2025-06-22. GPL-3.0. |
+| hermes-dec: [README](https://raw.githubusercontent.com/P1sec/hermes-dec/2e796663e1fedb93dca51060797ebf3327b3fedb/README.md) | **Reproduced (CI), added to Language runtimes and packagers.** HBC 98 and 99 fixtures from pinned `hermes-compiler` builds parse, disassemble, and decompile with function names, strings, and branches intact, but with an unsupported-version warning. With `-g1` debug info, `hbc-file-parser` raises a `TypeError` after printing the header. The pseudo-code does not preserve JavaScript behavior: executing it prints `21` where the original prints `25`, because registers are shared across functions. Release 0.1.8 (2026-10-15) is newer than the 2026-10-13 research snapshot. AGPL-3.0-or-later. |

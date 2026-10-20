@@ -246,7 +246,7 @@
       "evidence_type": "documented",
       "task": "Unity assets and dependencies",
       "incremental_value": "Complements Cpp2IL/Il2CppDumper code and metadata analysis with asset inspection and export.",
-      "constraints": "The README claims Unity 3.5.0\u20136000.4.X, with varying support quality. The GPL-3.0 base and paid Premium features must be distinguished.",
+      "constraints": "The README claims Unity 3.5.0–6000.4.X, with varying support quality. The GPL-3.0 base and paid Premium features must be distinguished.",
       "next_check": "Export a self-built Unity project and compare assets and references against the original.",
       "sources": [
         "https://raw.githubusercontent.com/AssetRipper/AssetRipper/beeb50ee1c223e856c860caa338e5309404956a3/README.md",
@@ -778,6 +778,38 @@
       "reproduced_scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25",
       "source_browser_urls": [
         "https://github.com/P1sec/hermes-dec/blob/2e796663e1fedb93dca51060797ebf3327b3fedb/README.md"
+      ]
+    },
+    {
+      "name": "Malduck",
+      "url": "https://github.com/CERT-Polska/malduck",
+      "section": "Malware analysis",
+      "description": "Python library of cryptography, compression, and memory-model helpers with a YARA-driven framework for writing your own malware configuration extractors; it does not ship family extractors.",
+      "research_priority": "B",
+      "decision": "added",
+      "checked_at": "2026-10-19",
+      "next_review": "2026-11-19",
+      "evidence_type": "reproduced (CI)",
+      "task": "Configuration extraction primitives",
+      "constraints": "Extractors and YARA rules are user-supplied; useful beside FLOSS/capa, not universal family recovery.",
+      "sources": [
+        "https://raw.githubusercontent.com/CERT-Polska/malduck/0425e0209ec30b656e75ff94071e01c34c4cffa5/README.md"
+      ],
+      "source_commit": "0425e0209ec30b656e75ff94071e01c34c4cffa5",
+      "license_api": "GPL-3.0",
+      "license_api_is_complete_audit": false,
+      "canonical_repo": "CERT-Polska/malduck",
+      "archived": false,
+      "default_branch_commit_at": "2025-06-22T15:04:14Z",
+      "github_release": {
+        "tag_name": "v4.4.1",
+        "published_at": "2024-05-10T13:20:36Z",
+        "html_url": "https://github.com/CERT-Polska/malduck/releases/tag/v4.4.1"
+      },
+      "reproduction": "examples/resource-intake/README.md",
+      "reproduced_scope": "Self-authored YARA-triggered extractor and RC4 config; wrong-key and no-marker samples yield no config",
+      "source_browser_urls": [
+        "https://github.com/CERT-Polska/malduck/blob/0425e0209ec30b656e75ff94071e01c34c4cffa5/README.md"
       ]
     }
   ]

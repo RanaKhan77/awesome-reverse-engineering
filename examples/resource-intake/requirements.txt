@@ -2,3 +2,4 @@ construct==2.10.70
 scapy==2.8.0
 yara-x==1.21.0
 hermes-dec==0.1.8
+malduck==4.4.1
