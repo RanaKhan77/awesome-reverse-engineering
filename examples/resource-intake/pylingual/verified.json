@@ -8,9 +8,9 @@
     "commit": "11a1516d84a6c2aa71ec23fbd11e4b99dc8c4a86",
     "install": "uv sync --frozen",
     "python": "3.13.16",
-    "xdis": "6.3.1.dev0 (git 51e36c42a01a83d67f6530fdf7fbd42a0f387d86)",
     "torch": "2.14.1",
-    "transformers": "5.19.0"
+    "transformers": "5.19.0",
+    "xdis": "6.3.1.dev0 (git 51e36c42a01a83d67f6530fdf7fbd42a0f387d86)"
   },
   "models": "pinned_config.yaml (tokenizers resolved from their default branch; see README)",
   "tokenizer_revisions_observed": {
@@ -58,7 +58,30 @@
           "Compilation Error"
         ]
       ],
-      "behavior": null
+      "syntax_errors": [
+        "parse_port"
+      ],
+      "behavior": {
+        "checksum": [
+          53359,
+          67,
+          0
+        ],
+        "classify": [
+          "negative",
+          "zero",
+          "even",
+          "odd"
+        ],
+        "label": "trace:007",
+        "squares": [
+          1,
+          4,
+          16,
+          25,
+          49
+        ]
+      }
     },
     {
       "version": "3.12",
@@ -69,6 +92,7 @@
           "Different control flow"
         ]
       ],
+      "syntax_errors": [],
       "behavior": {
         "checksum": [
           53359,
@@ -106,6 +130,7 @@
           "Different control flow"
         ]
       ],
+      "syntax_errors": [],
       "behavior": {
         "checksum": [
           53359,
@@ -146,7 +171,7 @@
     },
     {
       "path": "run.py",
-      "sha256": "a976ab46c7d83c7a258e1be7b0c09ab13ffc8001d9799318337e55e631b84f27"
+      "sha256": "102c4ed8d2464ffb97ddb85517be5b38f7217c4d10aa6cddf108ce25065ddb60"
     }
   ]
 }

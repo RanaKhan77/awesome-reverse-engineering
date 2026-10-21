@@ -841,7 +841,7 @@
         "html_url": "https://github.com/syssec-utd/pylingual/releases/tag/v0.1.0"
       },
       "reproduction": "examples/resource-intake/pylingual/verified.json",
-      "reproduced_scope": "CPython 3.11/3.12/3.13 fixture: five of six code objects behave like the original; the sixth is wrong and flagged on every version",
+      "reproduced_scope": "CPython 3.11/3.12/3.13 fixture: four of five functions, loaded one at a time, behave like the original; the fifth is wrong and flagged on every version, and on 3.11 it does not compile, so the whole file cannot be imported",
       "source_browser_urls": [
         "https://github.com/syssec-utd/pylingual/blob/11a1516d84a6c2aa71ec23fbd11e4b99dc8c4a86/README.md",
         "https://github.com/syssec-utd/pylingual/blob/11a1516d84a6c2aa71ec23fbd11e4b99dc8c4a86/pyproject.toml",
