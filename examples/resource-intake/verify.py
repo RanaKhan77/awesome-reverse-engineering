@@ -167,6 +167,19 @@ def memprocfs_host():
     return platform.system() == "Linux" and platform.machine() == "x86_64"
 
 
+def required_packages():
+    packages = {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1"}
+    if memprocfs_host():
+        packages.update(MEMPROCFS_PACKAGES)
+    return packages
+
+
+def memprocfs_env(leechcore_dir):
+    """Prepend leechcore.so's directory, keeping any library path the host already needs."""
+    existing = os.environ.get("LD_LIBRARY_PATH")
+    return dict(os.environ, LD_LIBRARY_PATH=os.pathsep.join([str(leechcore_dir), existing] if existing else [str(leechcore_dir)]))
+
+
 def memprocfs_image(path):
     image = bytearray(16 * 1024 * 1024)
     indexes = [(FIXTURE_VA >> shift) & 0x1FF for shift in (39, 30, 21, 12)]
@@ -185,7 +198,7 @@ def verify_memprocfs(work):
     image = work / "memprocfs.raw"
     memprocfs_image(image)
     # The memprocfs wheel does not bundle leechcore.so; leechcorepyc provides it.
-    env = dict(os.environ, LD_LIBRARY_PATH=str(Path(leechcorepyc.__file__).parent))
+    env = memprocfs_env(Path(leechcorepyc.__file__).parent)
     output = run(sys.executable, str(SOURCE / "memprocfs_probe.py"), str(image), hex(PML4), hex(FIXTURE_VA), env=env)
     observed = json.loads(output.splitlines()[-1])
     assert bytes.fromhex(observed["physical"]) == b"MPFS-PHYS-MARK-1" == bytes.fromhex(observed["pmem_file"])
@@ -196,10 +209,7 @@ def verify_memprocfs(work):
 
 
 def verify(work, jar):
-    expected_versions = {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1"}
-    if memprocfs_host():
-        expected_versions.update(MEMPROCFS_PACKAGES)
-    for package, expected in expected_versions.items():
+    for package, expected in required_packages().items():
         try:
             installed = version(package)
         except PackageNotFoundError as exc:
