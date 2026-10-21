@@ -173,27 +173,46 @@ def trc1_valid(frame):
     return frame[:5] == b"TRC1\x01" and len(payload) == length and frame[-4:] == struct.pack(">I", zlib.crc32(payload))
 
 
+def recv_exactly(conn, size):
+    """Read size bytes, or fewer only if the peer disconnects first."""
+    data = b""
+    while len(data) < size:
+        chunk = conn.recv(size - len(data))
+        if not chunk:
+            break
+        data += chunk
+    return data
+
+
 class Trc1Server(threading.Thread):
     """Localhost TRC1 server: replies OK plus the CRC to valid frames, or stops listening on a payload over crash_over bytes."""
 
     def __init__(self, crash_over=None):
         super().__init__(daemon=True)
         self.crash_over, self.frames, self.replies, self.crashed = crash_over, [], [], False
+        self.stopping = threading.Event()
         self.sock = socket.create_server(("127.0.0.1", 0))
+        self.sock.settimeout(0.1)  # lets run() notice stop() between connections
+
+    def stop(self):
+        self.stopping.set()
+        self.join(timeout=5)
+        self.sock.close()
 
     def run(self):
-        while not self.crashed:
+        while not (self.crashed or self.stopping.is_set()):
             try:
                 conn, _ = self.sock.accept()
+            except socket.timeout:
+                continue
             except OSError:
                 return
             with conn:
-                frame = conn.recv(7)
-                while 7 <= len(frame) < 7 + struct.unpack(">H", frame[5:7])[0] + 4:
-                    chunk = conn.recv(65536)
-                    if not chunk:
-                        break
-                    frame += chunk
+                conn.settimeout(5)
+                frame = recv_exactly(conn, 7)
+                if len(frame) == 7:
+                    frame += recv_exactly(conn, struct.unpack(">H", frame[5:7])[0] + 4)
+                # A frame cut short by a disconnect is recorded as received and fails trc1_valid.
                 self.frames.append(frame)
                 if self.crash_over is not None and len(frame) - 11 > self.crash_over:
                     self.crashed = True
@@ -222,13 +241,16 @@ def fuzz_trc1(work, crash_over=None, **options):
         sent.append(session.last_send)
         received.append(session.last_recv)
 
-    session = Session(
-        target=Target(connection=TCPSocketConnection("127.0.0.1", server.sock.getsockname()[1], recv_timeout=2)),
-        web_port=None, fuzz_loggers=[FuzzLoggerCsv(file_handle=log)], db_filename=str(work / f"boofuzz-{len(list(work.glob('boofuzz-*')))}.db"),
-        sleep_time=0, restart_sleep_time=0, post_test_case_callbacks=[record], **options,
-    )
-    session.connect(request)
-    session.fuzz(max_depth=1)
+    try:
+        session = Session(
+            target=Target(connection=TCPSocketConnection("127.0.0.1", server.sock.getsockname()[1], recv_timeout=2)),
+            web_port=None, fuzz_loggers=[FuzzLoggerCsv(file_handle=log)], db_filename=str(work / f"boofuzz-{len(list(work.glob('boofuzz-*')))}.db"),
+            sleep_time=0, restart_sleep_time=0, post_test_case_callbacks=[record], **options,
+        )
+        session.connect(request)
+        session.fuzz(max_depth=1)
+    finally:
+        server.stop()
     rows = list(csv.reader(io.StringIO(log.getvalue())))
     return request.render(), server, sent, received, rows
 
