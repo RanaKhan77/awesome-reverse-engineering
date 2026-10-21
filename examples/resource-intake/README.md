@@ -1,6 +1,6 @@
 # Five bounded resource examples
 
-These self-authored fixtures demonstrate Construct, Scapy, YARA-X, Vineflower, Malduck, and hermes-dec. They are small selection examples, not upstream test suites or evidence of full platform/version support.
+These self-authored fixtures demonstrate Construct, Scapy, YARA-X, Vineflower, Malduck, and hermes-dec in CI, plus a local PyLingual check. They are small selection examples, not upstream test suites or evidence of full platform/version support.
 
 Use Python 3.11 with `venv`/`pip` support, JDK 17, Node.js, and an Internet connection for the pinned packages, JAR, and Hermes compilers. From the repository root:
 
@@ -52,5 +52,17 @@ The hermes-dec check also records three limits:
 - The original fixture prints `even:negative:25` under Node.js; executing the pseudo-code prints `even:negative:21`, because register variables are shared across functions instead of being local to each call.
 
 The [dated local result](verified.json) records host/tool versions, input hashes, artifact digests, and the tested scope; it was produced in a Linux x86_64 container. CI repeats the examples and uploads current results through the [resource-example workflow](../../.github/workflows/resource-examples.yml). The current job uses Linux, Python 3.11, Java 17, and Node.js 22; it makes no Windows, macOS, hardware, or other-version claim.
+
+## Local check: PyLingual
+
+PyLingual needs about 1.2 GB of models per target Python version, so it is not part of the CI job. [`pylingual/fixture.py`](pylingual/fixture.py) is compiled with checked-hash invalidation for CPython 3.11, 3.12, and 3.13 (through `uv`-managed interpreters), decompiled with PyLingual v0.1.0 (commit `11a1516`), and imported again to compare behavior against the original. [`pinned_config.yaml`](pylingual/pinned_config.yaml) pins the segmentation and statement models to the Hugging Face revisions observed on 2026-10-19 and still current on 2026-10-21. PyLingual loads tokenizers without a revision argument, so the config cannot pin them; [the report](pylingual/verified.json) records the tokenizer revisions that were resolved.
+
+```bash
+git clone https://github.com/syssec-utd/pylingual && git -C pylingual checkout 11a1516d84a6c2aa71ec23fbd11e4b99dc8c4a86
+(cd pylingual && uv sync --frozen)
+python3 examples/resource-intake/pylingual/run.py --pylingual pylingual/.venv/bin/pylingual --output "$(mktemp -d)"
+```
+
+PyLingual itself needs Python 3.12 or newer. On all three target versions, five of six code objects decompile to source with the original behavior. `parse_port` (a `try`/`except` followed by a chained comparison) fails on every version, and PyLingual flags it in both its report and the output file: on 3.11 the output does not compile (`Compilation Error`); on 3.12 and 3.13 it compiles but returns `-2` for `"8080"` instead of `8080` (`Different control flow`). The same results were produced at commit `509ea92` on 2026-10-19, and repeated runs produced identical output.
 
 See the [candidate review](../../docs/priority-candidates.md) for primary sources, documented requirements, and the nineteen entries without execution verification.

@@ -179,6 +179,7 @@ Run samples only in isolated, disposable environments, and follow your organizat
 - [Il2CppDumper](https://github.com/Perfare/Il2CppDumper) - Restores Unity IL2CPP type and method metadata for use in IDA, Ghidra, and other tools; no commits since July 2024, with Cpp2IL as a maintained alternative.
 - [pycdc](https://github.com/zrax/pycdc) - Disassembles and decompiles Python bytecode from `.pyc` files; decompilation of recent Python versions can be incomplete.
 - [pyinstxtractor](https://github.com/extremecoders-re/pyinstxtractor) - Extracts the contents of PyInstaller executables, including the bytecode needed for decompilation; the [pyinstxtractor-ng](https://github.com/pyinstxtractor/pyinstxtractor-ng) fork uses xdis so the host Python need not match the build version and supports PyInstaller archive decryption when the embedded key can be recovered, but neither tool decompiles bytecode.
+- [PyLingual](https://github.com/syssec-utd/pylingual) - Model-assisted CPython 3.6+ bytecode decompiler that recompiles its output and flags code objects whose bytecode does not match; downloads large per-version models.
 
 ## Web and protocols
 

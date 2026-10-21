@@ -1,0 +1,152 @@
+{
+  "checked_at": "2026-10-21",
+  "host": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit"
+  },
+  "pylingual": {
+    "repository": "https://github.com/syssec-utd/pylingual",
+    "commit": "11a1516d84a6c2aa71ec23fbd11e4b99dc8c4a86",
+    "install": "uv sync --frozen",
+    "python": "3.13.16",
+    "xdis": "6.3.1.dev0 (git 51e36c42a01a83d67f6530fdf7fbd42a0f387d86)",
+    "torch": "2.14.1",
+    "transformers": "5.19.0"
+  },
+  "models": "pinned_config.yaml (tokenizers resolved from their default branch; see README)",
+  "tokenizer_revisions_observed": {
+    "syssec-utd/py311-pylingual-v1-tokenizer": "369775723233c8ec67a05c254366c910e32a1374",
+    "syssec-utd/py311-pylingual-v1-tok": "6f868aa2873f782d79ed9ab85516c3c2422a5597",
+    "syssec-utd/py312-pylingual-v1-tokenizer": "f4a5f8542a4fbc205e7aae701d73b182dd22f0a2",
+    "syssec-utd/py312-pylingual-v1-tok": "50fc56bdbf8ed6236334b1ed6bea9423b1bde205",
+    "syssec-utd/py313-pylingual-v3-tokenizer": "753a53e177167663ceba2f0ebcd93f7330a6ac3f",
+    "syssec-utd/py313-pylingual-v3-tok": "46e5d90e7d08078dc963cd91da8ec37eead2c666"
+  },
+  "expected": {
+    "checksum": [
+      53359,
+      67,
+      0
+    ],
+    "classify": [
+      "negative",
+      "zero",
+      "even",
+      "odd"
+    ],
+    "label": "trace:007",
+    "parse_port": [
+      8080,
+      -1,
+      -2,
+      -2
+    ],
+    "squares": [
+      1,
+      4,
+      16,
+      25,
+      49
+    ]
+  },
+  "results": [
+    {
+      "version": "3.11",
+      "pyc_sha256": "7a18e2a7e7e632e9f3945daad17e2431e49d168cd219fd30dda7cbb8d279e892",
+      "flagged_failures": [
+        [
+          "parse_port",
+          "Compilation Error"
+        ]
+      ],
+      "behavior": null
+    },
+    {
+      "version": "3.12",
+      "pyc_sha256": "8ec9cb730d5b7ae17566ceacc653cc8a8a5a70ccaeb136116daffb0b348aa382",
+      "flagged_failures": [
+        [
+          "parse_port",
+          "Different control flow"
+        ]
+      ],
+      "behavior": {
+        "checksum": [
+          53359,
+          67,
+          0
+        ],
+        "classify": [
+          "negative",
+          "zero",
+          "even",
+          "odd"
+        ],
+        "label": "trace:007",
+        "parse_port": [
+          -2,
+          -1,
+          -2,
+          -2
+        ],
+        "squares": [
+          1,
+          4,
+          16,
+          25,
+          49
+        ]
+      }
+    },
+    {
+      "version": "3.13",
+      "pyc_sha256": "f35ad0bd68558bc3887fb6964920c72965afd0fd4c64bead0d858bd2af52fc35",
+      "flagged_failures": [
+        [
+          "parse_port",
+          "Different control flow"
+        ]
+      ],
+      "behavior": {
+        "checksum": [
+          53359,
+          67,
+          0
+        ],
+        "classify": [
+          "negative",
+          "zero",
+          "even",
+          "odd"
+        ],
+        "label": "trace:007",
+        "parse_port": [
+          -2,
+          -1,
+          -2,
+          -2
+        ],
+        "squares": [
+          1,
+          4,
+          16,
+          25,
+          49
+        ]
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "path": "fixture.py",
+      "sha256": "7d6b254efc5c1beb86e61d5394f23c1cea91f929542d949afe8b17238c199bde"
+    },
+    {
+      "path": "pinned_config.yaml",
+      "sha256": "444ffc9b0af36e091c86f22c9617cd96d0e3b6ea29b6d79d5270b409eeffc4b2"
+    },
+    {
+      "path": "run.py",
+      "sha256": "a976ab46c7d83c7a258e1be7b0c09ab13ffc8001d9799318337e55e631b84f27"
+    }
+  ]
+}
