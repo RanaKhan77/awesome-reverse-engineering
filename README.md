@@ -148,7 +148,7 @@ Find a tool by the work you need to do. Each entry describes its purpose; commer
 - [HollowsHunter](https://github.com/hasherezade/hollows_hunter) - Scans running processes on Windows to detect and dump injected, hooked, or hollowed memory modules in batch workflows.
 - [PE-sieve](https://github.com/hasherezade/pe-sieve) - Scans a running process for injected or modified code, such as hollowed modules, hooks, and shellcode, and dumps what it finds.
 - [Scylla](https://github.com/NtQuery/Scylla) - Dumps unpacked processes and reconstructs their Import Address Tables (IAT) on 32-bit and 64-bit Windows.
-- [ScyllaHide](https://github.com/x64dbg/ScyllaHide) - Advanced anti-anti-debugging plugin for x64dbg, IDA Pro, and GDB to hide debuggers from process evasion checks.
+- [ScyllaHide](https://github.com/x64dbg/ScyllaHide) - Advanced anti-anti-debugging library and plugin for Windows debuggers (x64dbg, OllyDbg, and IDA Pro) to hide debuggers from process evasion checks.
 
 ## Malware analysis
 
@@ -211,7 +211,7 @@ Run samples only in isolated, disposable environments, and follow your organizat
 - [Hermit](https://github.com/xV4L3x/hermit) - Interactive toolkit for inspecting, disassembling, decompiling, and structurally patching React Native Hermes bytecode; supports HBC 94, 95, and 96, with HBC 98 unsupported.
 - [pycdc](https://github.com/zrax/pycdc) - Disassembles and decompiles Python bytecode from `.pyc` files; decompilation of recent Python versions can be incomplete.
 - [pyinstxtractor](https://github.com/extremecoders-re/pyinstxtractor) - Extracts the contents of PyInstaller executables, including the bytecode needed for decompilation; the [pyinstxtractor-ng](https://github.com/pyinstxtractor/pyinstxtractor-ng) fork uses xdis so the host Python need not match the build version and supports PyInstaller archive decryption when the embedded key can be recovered, but neither tool decompiles bytecode.
-- [PyLingual](https://github.com/syssec-utd/pylingual) - Modern Python decompiler supporting CPython bytecode across versions 3.6 through 3.14 with control flow recovery.
+- [PyLingual](https://github.com/syssec-utd/pylingual) - Python bytecode decompiler supporting CPython 3.6+ using neural-guided translation and AST reconstruction, available via CLI or web service.
 - [r2flutter](https://github.com/radareorg/r2flutter) - Radare2 plugin for parsing and inspecting Dart AOT snapshot metadata and function symbols in Flutter binaries.
 - [Redress](https://github.com/goretk/redress) - Tool for analyzing stripped Go executables and extracting compiler metadata, struct definitions, and packages.
 - [reFlutter](https://github.com/Impact-I/reFlutter) - Framework for reverse engineering Flutter mobile applications by patching the Flutter engine to dump traffic and method calls.
@@ -281,10 +281,10 @@ Run samples only in isolated, disposable environments, and follow your organizat
 - [AssetRipper](https://github.com/AssetRipper/AssetRipper) - Unity asset-analysis and export tool with version-dependent support and additional paid Premium features.
 - [Cheat Engine](https://github.com/cheat-engine/cheat-engine) - Memory scanner, debugger, and disassembler for finding and changing values in running processes, mainly used for game and application modding.
 - [Cpp2IL](https://github.com/SamboyCoding/Cpp2IL) - Recovers types, methods, and IL from Unity IL2CPP builds into .NET assemblies and other outputs; described by its author as work in progress.
-- [FModel](https://github.com/4sval/FModel) - Inspects, extracts, and decodes Unreal Engine game archives (PAK, UTOC, UCAS) including materials, models, and audio.
+- [FModel](https://github.com/4sval/FModel) - Windows GUI tool that inspects, extracts, and decodes Unreal Engine game archives (PAK, UTOC, UCAS) including materials, models, and audio.
 - [GDRE Tools](https://github.com/GDRETools/gdsdecomp) - Recovers Godot projects from exported games, including PCK extraction, GDScript decompilation, and resource conversion.
 - [Il2CppDumper](https://github.com/Perfare/Il2CppDumper) - Restores Unity IL2CPP type and method metadata for use in IDA, Ghidra, and other tools; no commits since July 2024, with Cpp2IL as a maintained alternative.
-- [ReClass.NET](https://github.com/ReClassNET/ReClass.NET) - Memory struct mapping and reverse-engineering tool for interactively reconstructing C/C++ data structures in live processes.
+- [ReClass.NET](https://github.com/ReClassNET/ReClass.NET) - Windows memory struct mapping tool for interactively reconstructing C/C++ data structures in live processes.
 - [Source 2 Viewer](https://github.com/ValveResourceFormat/ValveResourceFormat) - Decompiler, asset exporter, and package explorer for Valve Source 2 resources and VPK archives.
 - [UModel](https://www.gildor.org/en/projects/umodel) - Unreal Model Viewer for exploring, extracting, and previewing skeletal meshes, animations, and textures from Unreal Engine packages.
 - [vgmstream](https://github.com/vgmstream/vgmstream) - Multi-format library and command-line tool for decoding and analyzing proprietary video game audio streams.
@@ -305,7 +305,7 @@ Run samples only in isolated, disposable environments, and follow your organizat
 - [angr](https://github.com/angr/angr) - Python framework for symbolic execution and program analysis; [angr-management](https://github.com/angr/angr-management) is its official GUI front end, not a separate analysis engine.
 - [BINSEC](https://github.com/binsec/binsec) - Formal binary analysis platform providing symbolic execution, vulnerability detection, and binary security verification.
 - [flare-emu](https://github.com/mandiant/flare-emu) - Scriptable emulator bridging IDA Pro, Ghidra, and radare2 with Unicorn for decrypting strings and exploring functions without full execution.
-- [KLEE](https://github.com/klee/klee) - Symbolic execution engine built on top of LLVM for automatically generating high-coverage test cases and proving safety assertions.
+- [KLEE](https://github.com/klee/klee) - Symbolic execution engine built on top of LLVM for automatically generating high-coverage test cases and checking for safety assertion violations.
 - [Miasm](https://github.com/cea-sec/miasm) - Python reverse-engineering framework with an intermediate representation, emulation, symbolic execution, and assemblers and disassemblers for several architectures.
 - [PANDA](https://github.com/panda-re/panda) - Record, replay, and dynamic analysis platform built on QEMU, enabling whole-system execution recording and architectural taint tracking.
 - [Qiling](https://github.com/qilingframework/qiling) - Emulates binaries with operating-system services for scripted runtime analysis.
