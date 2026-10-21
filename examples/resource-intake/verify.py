@@ -1,18 +1,22 @@
-"""Reproduce six narrow resource examples with independent expected outputs."""
+"""Reproduce seven narrow resource examples with independent expected outputs."""
 import argparse
 from datetime import datetime, timezone
 import hashlib
 from importlib.metadata import PackageNotFoundError, version
+import csv
 import io
 import json
 from pathlib import Path
 import platform
 import re
+import socket
 import struct
 import subprocess
 import sys
 import tarfile
 import tempfile
+import threading
+import zlib
 from urllib.request import urlopen
 
 
@@ -34,6 +38,7 @@ HBC_PSEUDOCODE_OUTPUT = "even:negative:21"
 DUCK_KEY = b"duck-key"
 DUCK_PLAIN = b"c2=http://192.0.2.10/gate;c2=http://198.51.100.7/gate;campaign=trace-7;sleep=300"
 DUCK_CONFIG = {"family": "duckcfg", "urls": ["http://192.0.2.10/gate", "http://198.51.100.7/gate"], "campaign": "trace-7", "sleep": 300}
+TRC1_CASES = 575
 
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -157,8 +162,98 @@ def verify_malduck(work):
     assert results["wrong-key"] == (None, []) and results["no-marker"] == (None, [])
     return sha256(work / "duckcfg-good.bin")
 
+def trc1_frame(payload=b"trace"):
+    """TRC1: magic, kind, big-endian payload length, payload, big-endian CRC-32 of the payload (built with struct and zlib)."""
+    return b"TRC1\x01" + struct.pack(">H", len(payload)) + payload + struct.pack(">I", zlib.crc32(payload))
+
+
+def trc1_valid(frame):
+    length = struct.unpack(">H", frame[5:7])[0] if len(frame) >= 7 else -1
+    payload = frame[7:-4]
+    return frame[:5] == b"TRC1\x01" and len(payload) == length and frame[-4:] == struct.pack(">I", zlib.crc32(payload))
+
+
+class Trc1Server(threading.Thread):
+    """Localhost TRC1 server: replies OK plus the CRC to valid frames, or stops listening on a payload over crash_over bytes."""
+
+    def __init__(self, crash_over=None):
+        super().__init__(daemon=True)
+        self.crash_over, self.frames, self.replies, self.crashed = crash_over, [], [], False
+        self.sock = socket.create_server(("127.0.0.1", 0))
+
+    def run(self):
+        while not self.crashed:
+            try:
+                conn, _ = self.sock.accept()
+            except OSError:
+                return
+            with conn:
+                frame = conn.recv(7)
+                while 7 <= len(frame) < 7 + struct.unpack(">H", frame[5:7])[0] + 4:
+                    chunk = conn.recv(65536)
+                    if not chunk:
+                        break
+                    frame += chunk
+                self.frames.append(frame)
+                if self.crash_over is not None and len(frame) - 11 > self.crash_over:
+                    self.crashed = True
+                    self.sock.close()
+                    return
+                reply = b"OK" + frame[-4:] if trc1_valid(frame) else b"BAD"
+                self.replies.append(reply)
+                conn.sendall(reply)
+
+
+def fuzz_trc1(work, crash_over=None, **options):
+    from boofuzz import Block, Byte, Checksum, FuzzLoggerCsv, Request, Session, Size, Static, String, Target, TCPSocketConnection
+
+    request = Request("trc1", children=(
+        Static(name="magic", default_value=b"TRC1"),
+        Byte(name="kind", default_value=1, fuzzable=False),
+        Size(name="length", block_name="body", length=2, endian=">", fuzzable=False),
+        Block(name="body", children=(String(name="payload", default_value="trace", max_len=48),)),
+        Checksum(name="crc", block_name="body", algorithm="crc32", endian=">", fuzzable=False),
+    ))
+    server = Trc1Server(crash_over)
+    server.start()
+    sent, received, log = [], [], io.StringIO()
+
+    def record(target, fuzz_data_logger, session, *args, **kwargs):
+        sent.append(session.last_send)
+        received.append(session.last_recv)
+
+    session = Session(
+        target=Target(connection=TCPSocketConnection("127.0.0.1", server.sock.getsockname()[1], recv_timeout=2)),
+        web_port=None, fuzz_loggers=[FuzzLoggerCsv(file_handle=log)], db_filename=str(work / f"boofuzz-{len(list(work.glob('boofuzz-*')))}.db"),
+        sleep_time=0, restart_sleep_time=0, post_test_case_callbacks=[record], **options,
+    )
+    session.connect(request)
+    session.fuzz(max_depth=1)
+    rows = list(csv.reader(io.StringIO(log.getvalue())))
+    return request.render(), server, sent, received, rows
+
+
+def verify_boofuzz(work):
+    rendered, server, sent, received, _ = fuzz_trc1(work, receive_data_after_fuzz=True)
+    assert rendered == trc1_frame(), rendered.hex()
+    assert len(server.frames) == TRC1_CASES and sent == server.frames and received == server.replies
+    assert all(trc1_valid(frame) for frame in server.frames), "a fuzzed frame has a wrong length or CRC"
+    # String mutations are text: b"\xde\xad\xbe\xef" patterns are sent UTF-8 encoded, and max_len counts characters.
+    longest = max(server.frames, key=len)
+    assert len(longest) - 11 == 96 and longest[7:15] == "\xde\xad\xbe\xef".encode()
+    # By default, replies to fuzzed messages are not read.
+    _, _, _, default_received, _ = fuzz_trc1(work, index_end=5)
+    assert default_received == [b""] * 5, default_received
+    # Without a restart method or monitor, a target that stops listening ends the run early with only an info message.
+    _, crashed, _, _, rows = fuzz_trc1(work, crash_over=40, restart_threshold=1)
+    kinds = [row[1] for row in rows]
+    assert crashed.crashed and len(crashed.frames) < TRC1_CASES and "fail" not in kinds and "error" not in kinds
+    assert any("Ending fuzzing" in row[-1] for row in rows)
+    return {"cases": TRC1_CASES, "frames_before_target_stopped": len(crashed.frames), "default_frame": rendered.hex()}
+
+
 def verify(work, jar):
-    for package, expected in {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1"}.items():
+    for package, expected in {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1", "boofuzz": "0.4.2"}.items():
         try:
             installed = version(package)
         except PackageNotFoundError as exc:
@@ -240,6 +335,7 @@ def verify(work, jar):
 
     duck_digest = verify_malduck(work)
     hbc_digests = verify_hermes_dec(work)
+    boofuzz_summary = verify_boofuzz(work)
 
     return {
         "checked_at": datetime.now(timezone.utc).isoformat(),
@@ -251,6 +347,7 @@ def verify(work, jar):
             {"name": "Vineflower", "version": "1.12.0", "result": "passed", "scope": "Java 17 record/switch expression, rebuild, main output and five branch vectors"},
             {"name": "Malduck", "version": "4.4.1", "result": "passed", "scope": "Self-authored YARA-triggered extractor and RC4 config; wrong-key and no-marker samples yield no config"},
             {"name": "hermes-dec", "version": "0.1.8", "result": "passed", "scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25"},
+            {"name": "boofuzz", "version": "0.4.2", "result": "passed", "scope": "Localhost TRC1 protocol: default frame, 575 payload mutations with correct length/CRC, sent and replied frames match; replies unread by default, UTF-8 string mutations, and a stopped target ends the run without a failure"},
         ],
         "inputs": [{"path": name, "sha256": sha256(SOURCE / name)} for name in ("BranchDemo.java", "Probe.java", "hbc_fixture.js", "malduck_modules/duckcfg/__init__.py", "malduck_modules/duckcfg/duckcfg.yar", "verify.py", "requirements.txt")],
         "golden_hex": GOLDEN.hex(),
@@ -260,6 +357,7 @@ def verify(work, jar):
         "hermes_dec": {"compilers": {str(v): {"url": u, "sha256": d} for v, (u, d) in HERMESC.items()},
                        "hbc_sha256": {str(v): d for v, d in hbc_digests.items()},
                        "original_output": HBC_ORIGINAL_OUTPUT, "pseudocode_output": HBC_PSEUDOCODE_OUTPUT},
+        "boofuzz": boofuzz_summary,
     }
 
 

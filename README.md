@@ -184,6 +184,7 @@ Run samples only in isolated, disposable environments, and follow your organizat
 
 ![A browser displaying a network packet trace](.github/section-art/web-protocols.png)
 
+- [boofuzz](https://github.com/jtpereyda/boofuzz) - Python framework for describing a protocol's message fields and sending mutated messages to a target, useful for testing a reconstructed protocol against a live service; crash detection needs a process monitor or restart callback.
 - [Burp Suite](https://portswigger.net/burp) - Intercepting proxy and toolkit for inspecting, replaying, and modifying HTTP and WebSocket traffic. **Commercial**, with a free Community Edition.
 - [Chrome DevTools](https://developer.chrome.com/docs/devtools/) - Browser tools for stepping through JavaScript, inspecting network requests, and examining runtime state.
 - [HTTP Toolkit](https://httptoolkit.com/) - Intercepts and inspects HTTP(S) traffic from browsers, desktop applications, Android devices, and containers with automated interception setup. **Commercial**, with a free open-source edition.
