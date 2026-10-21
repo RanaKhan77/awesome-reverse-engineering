@@ -32,7 +32,14 @@ class Prerequisites(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
 
     def test_all_missing_pinned_packages_are_reported(self):
-        packages = dict(line.split("==", 1) for line in (SCRIPT.parent / "requirements.txt").read_text().splitlines() if line and not line.startswith("#"))
+        packages = {}
+        for line in (SCRIPT.parent / "requirements.txt").read_text().splitlines():
+            if line and not line.startswith("#"):
+                requirement, _, marker = line.partition(";")
+                name, pinned = requirement.strip().split("==", 1)
+                # Platform-limited pins are only required on the host the marker selects.
+                if not marker or name not in verifier.MEMPROCFS_PACKAGES or verifier.memprocfs_host():
+                    packages[name] = pinned
         for missing in packages:
             def installed(name):
                 if name == missing:
@@ -45,6 +52,21 @@ class Prerequisites(unittest.TestCase):
     def test_wrong_pinned_version_is_actionable(self):
         with patch.object(verifier, "version", return_value="0.0"), self.assertRaisesRegex(SystemExit, "Expected construct==2.10.70"):
             verifier.verify(Path("unused"), None)
+
+    def test_memprocfs_pins_are_required_only_on_its_host(self):
+        installed = dict(verifier.MEMPROCFS_PACKAGES, **{"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1"})
+        for host, expected in [(("Darwin", "arm64"), "javac"), (("Linux", "x86_64"), "Missing Python dependency: memprocfs")]:
+            def version(name):
+                if name == "memprocfs":
+                    raise PackageNotFoundError(name)
+                return installed[name]
+            with self.subTest(host=host), patch.object(verifier.platform, "system", return_value=host[0]), patch.object(verifier.platform, "machine", return_value=host[1]), patch.object(verifier, "version", side_effect=version), patch.object(verifier, "require_java", side_effect=SystemExit("javac")):
+                with self.assertRaisesRegex(SystemExit, expected):
+                    verifier.verify(Path("unused"), None)
+
+    def test_missing_libusb_is_actionable(self):
+        with patch.object(verifier.ctypes.util, "find_library", return_value=None), self.assertRaisesRegex(SystemExit, "libusb-1.0"):
+            verifier.verify_memprocfs(Path("unused"))
 
     def test_java_versions_on_either_output_stream(self):
         for executable, stdout, stderr in [

@@ -811,6 +811,38 @@
       "source_browser_urls": [
         "https://github.com/CERT-Polska/malduck/blob/0425e0209ec30b656e75ff94071e01c34c4cffa5/README.md"
       ]
+    },
+    {
+      "name": "MemProcFS",
+      "url": "https://github.com/ufrisk/MemProcFS",
+      "section": "Malware analysis",
+      "description": "Exposes memory dumps and live memory as a virtual file system and Python, C, and Rust APIs, with process and forensic views for Windows targets; mounting requires Dokany, FUSE, or macFUSE.",
+      "research_priority": "B",
+      "decision": "added",
+      "checked_at": "2026-10-19",
+      "next_review": "2026-11-19",
+      "evidence_type": "reproduced (CI)",
+      "task": "Memory dumps as files/APIs",
+      "constraints": "Runs on Linux x86-64 only in this check; raw images without a recognizable OS need -dtb; Windows process, registry, and forensic views were not exercised; the Linux pip wheel needs leechcorepyc and libusb-1.0.",
+      "sources": [
+        "https://raw.githubusercontent.com/ufrisk/MemProcFS/a81e7960d6f17a4adfc77c080f94e631d74b2fb9/README.md"
+      ],
+      "source_commit": "a81e7960d6f17a4adfc77c080f94e631d74b2fb9",
+      "license_api": "AGPL-3.0",
+      "license_api_is_complete_audit": false,
+      "canonical_repo": "ufrisk/MemProcFS",
+      "archived": false,
+      "default_branch_commit_at": "2026-10-05T18:10:04Z",
+      "github_release": {
+        "tag_name": "v5.19",
+        "published_at": "2026-10-05T17:38:01Z",
+        "html_url": "https://github.com/ufrisk/MemProcFS/releases/tag/v5.19"
+      },
+      "reproduction": "examples/resource-intake/README.md",
+      "reproduced_scope": "Self-authored raw image: physical read, user-supplied DTB fallback process, virtual read, virt2phys, /memory.pmem; no Windows OS analysis",
+      "source_browser_urls": [
+        "https://github.com/ufrisk/MemProcFS/blob/a81e7960d6f17a4adfc77c080f94e631d74b2fb9/README.md"
+      ]
     }
   ]
 }
