@@ -1,6 +1,6 @@
 # Bounded resource examples
 
-These self-authored fixtures demonstrate Construct, Scapy, YARA-X, Vineflower, Malduck, hermes-dec, MemProcFS, and boofuzz. They are small selection examples, not upstream test suites or evidence of full platform/version support.
+These self-authored fixtures demonstrate Construct, Scapy, YARA-X, Vineflower, Malduck, hermes-dec, MemProcFS, and boofuzz in CI, plus a local PyLingual check. They are small selection examples, not upstream test suites or evidence of full platform/version support.
 
 Use Python 3.11 with `venv`/`pip` support, JDK 17, Node.js, and an Internet connection for the pinned packages, JAR, and Hermes compilers. From the repository root:
 
@@ -64,5 +64,17 @@ The boofuzz check also records three limits:
 Without `-dtb`, MemProcFS rejects a raw image that contains no identifiable operating system (`Unable to locate valid DTB`). The Linux `memprocfs` wheel does not include `leechcore.so`; the runner uses the one from `leechcorepyc` by starting the probe with `LD_LIBRARY_PATH` pointing at its directory.
 
 The [dated local result](verified.json) records host/tool versions, input hashes, artifact digests, and the tested scope; it was produced in a Linux x86_64 container. CI repeats the examples and uploads current results through the [resource-example workflow](../../.github/workflows/resource-examples.yml). The current job uses Linux x86-64, Python 3.11, Java 17, Node.js 22, and `libusb-1.0`; it makes no Windows, macOS, hardware, or other-version claim.
+
+## Local check: PyLingual
+
+PyLingual needs about 1.2 GB of models per target Python version, so it is not part of the CI job. [`pylingual/fixture.py`](pylingual/fixture.py) is compiled with checked-hash invalidation for CPython 3.11.15, 3.12.13, and 3.13.14 (through exact-version `uv` requests), decompiled with PyLingual v0.1.0 (commit `11a1516`), and its functions are loaded one at a time and compared with the original, so a function that does not compile cannot hide the others. [`pinned_config.yaml`](pylingual/pinned_config.yaml) pins the segmentation and statement models to the Hugging Face revisions observed on 2026-10-19 and still current on 2026-10-21. PyLingual loads tokenizers without a revision argument, so the config cannot pin them; [the report](pylingual/verified.json), which the runner generates, records the tokenizer revisions the Hugging Face cache resolved, the PyLingual commit and package versions, and input hashes.
+
+```bash
+git clone https://github.com/syssec-utd/pylingual && git -C pylingual checkout 11a1516d84a6c2aa71ec23fbd11e4b99dc8c4a86
+(cd pylingual && uv sync --frozen)
+python3 examples/resource-intake/pylingual/run.py --pylingual pylingual/.venv/bin/pylingual --output "$(mktemp -d)"
+```
+
+The runner records the resolved compiler versions, disables the optional shared Redis translation cache, and saves per-target stdout/stderr logs for model-download or decompilation failures. PyLingual itself needs Python 3.12 or newer. Hosts using a SOCKS proxy may also need the optional `socksio` transport in the PyLingual environment; this is a transport requirement, not a model or decompiler result. On all three target versions, `classify`, `checksum`, `squares`, and `label` behave like the original. `parse_port` (a `try`/`except` followed by a chained comparison) fails on every version, and PyLingual flags it in both its report and the output file: on 3.11 it does not compile (`Compilation Error`), so the decompiled file as a whole cannot be imported; on 3.12 and 3.13 the file imports, but `parse_port` returns `-2` for `"8080"` instead of `8080` (`Different control flow`). The same results were produced at commit `509ea92` on 2026-10-19, and repeated runs produced identical output.
 
 See the [candidate review](../../docs/priority-candidates.md) for primary sources, documented requirements, and the nineteen entries without execution verification.
