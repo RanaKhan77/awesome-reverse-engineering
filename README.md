@@ -129,6 +129,7 @@ Run samples only in isolated, disposable environments, and follow your organizat
 - [CAPE Sandbox](https://github.com/kevoreilly/CAPEv2) - Automated sandbox derived from Cuckoo that runs samples in virtual machines and records behavior, unpacked payloads, and malware configurations.
 - [FLARE-VM](https://github.com/mandiant/flare-vm) - Installation scripts that turn a Windows virtual machine into a malware-analysis and reverse-engineering workstation.
 - [Malduck](https://github.com/CERT-Polska/malduck) - Python library of cryptography, compression, and memory-model helpers with a YARA-driven framework for writing your own malware configuration extractors; it does not ship family extractors.
+- [MemProcFS](https://github.com/ufrisk/MemProcFS) - Exposes memory dumps and live memory as a virtual file system and Python, C, and Rust APIs, with process and forensic views for Windows targets; mounting requires Dokany, FUSE, or macFUSE.
 - [mwemu](https://github.com/mwemuorg/mwemu) - Emulates x86/x64 and AArch64 code for PE, ELF, and Mach-O investigations, with Windows API models and kernel-driver memory-lifetime checks; Windows-focused, with growing Linux/macOS support and Rust 1.95+ required to build the reviewed source.
 - [oletools](https://github.com/decalage2/oletools) - Python tools for inspecting Office, OLE, and RTF files and extracting macros, embedded objects, and other document artifacts.
 - [PE-sieve](https://github.com/hasherezade/pe-sieve) - Scans a running process for injected or modified code, such as hollowed modules, hooks, and shellcode, and dumps what it finds.
@@ -185,6 +186,7 @@ Run samples only in isolated, disposable environments, and follow your organizat
 
 ![A browser displaying a network packet trace](.github/section-art/web-protocols.png)
 
+- [boofuzz](https://github.com/jtpereyda/boofuzz) - Python framework for describing a protocol's message fields and sending mutated messages to a target, useful for testing a reconstructed protocol against a live service; crash detection needs a process monitor or restart callback.
 - [Burp Suite](https://portswigger.net/burp) - Intercepting proxy and toolkit for inspecting, replaying, and modifying HTTP and WebSocket traffic. **Commercial**, with a free Community Edition.
 - [Chrome DevTools](https://developer.chrome.com/docs/devtools/) - Browser tools for stepping through JavaScript, inspecting network requests, and examining runtime state.
 - [HTTP Toolkit](https://httptoolkit.com/) - Intercepts and inspects HTTP(S) traffic from browsers, desktop applications, Android devices, and containers with automated interception setup. **Commercial**, with a free open-source edition.
@@ -287,6 +289,7 @@ See the [list structure and maintenance review](docs/list-review.md) for a dated
 - [Awesome Game File Format Reversing](https://github.com/VelocityRa/awesome-game-file-format-reversing) - Game formats, engines, asset tools, and specialist references.
 - [Awesome REA](https://github.com/kaixinbaba/awesome-rea) - Independent directory of open-source reconstructions, reimplementations, compatibility projects, and REA resources, with dated source reviews, license notes, and known limits.
 - [Awesome REA (reacher-z)](https://github.com/reacher-z/Awesome-REA) - Bilingual catalog of reverse-engineering tools, reconstruction projects, case studies, and research, with a searchable website and a separately labeled automated repository index.
+- [Awesome Reverse-Engineered](https://github.com/alexgaoth/awesome-reverse-engineered) - Searchable, automatically collected index of open-source implementations, unofficial clients, device integrations, and protocol or file-format projects, with an agent skill and MCP server; nightly GitHub metadata checks track repository health, while relevance and technical claims require independent review.
 - [Awesome Reverse Engineering and Malware Analysis](https://github.com/ZX41R/awesome-reverse-engineering-and-malware-analysis) - Topic pages spanning reversing, malware analysis, and related research.
 - [Awesome Reversing by Reversing.ID](https://github.com/ReversingID/Awesome-Reversing) - Separate catalogs for software, hardware, formats, and databases.
 - [Awesome Web Reversing](https://github.com/TheQmaks/awesome-web-reversing) - Web investigation workflows and a machine-readable tool catalog.

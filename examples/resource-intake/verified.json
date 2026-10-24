@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-10-20T14:20:47.418756+00:00",
+  "checked_at": "2026-10-24T14:08:49.502647+00:00",
   "host": {
-    "platform": "Linux-6.1.0-53-cloud-amd64-x86_64-with-glibc2.36",
+    "platform": "Linux-6.1.0-54-cloud-amd64-x86_64-with-glibc2.36",
     "python": "3.11.2",
     "javac": "javac 17.0.20.1",
-    "node": "v24.21.0"
+    "node": "v20.20.2"
   },
   "results": [
     {
@@ -42,6 +42,18 @@
       "version": "0.1.8",
       "result": "passed",
       "scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25"
+    },
+    {
+      "name": "boofuzz",
+      "version": "0.4.2",
+      "result": "passed",
+      "scope": "Localhost TRC1 protocol: default frame, 575 payload mutations with correct length/CRC, sent and replied frames match; replies unread by default, UTF-8 string mutations, and a stopped target ends the run without a failure"
+    },
+    {
+      "name": "MemProcFS",
+      "version": "5.19.0",
+      "result": "passed",
+      "scope": "Self-authored raw image: physical read, user-supplied DTB fallback process, virtual read, virt2phys, /memory.pmem; no Windows OS analysis"
     }
   ],
   "inputs": [
@@ -66,12 +78,16 @@
       "sha256": "7b36aaf95fad7f8544eb87962b61277d383ce616d43fd880c3ee4f74a9001581"
     },
     {
+      "path": "memprocfs_probe.py",
+      "sha256": "28371a05c81ddf4af7515350adf3868b40e6584880abc490bc7b0f393f7804fb"
+    },
+    {
       "path": "verify.py",
-      "sha256": "1d06631607af8e9cfd8c0f85e55792dd1e672b2c00f75cbaaf772511e50d9b09"
+      "sha256": "e2ac23876d6c535f5355a836c3269caaaeb7e10f94b105e976116180a6b18e38"
     },
     {
       "path": "requirements.txt",
-      "sha256": "e82f3a0ec8e0920c97b12fc63d92cfe34c898c2999ac70c6dba931ea21ac8d05"
+      "sha256": "ca1e1d2f17a1c624b3f3ff46678acfcbac9fdee4fc23c5510cfb5653abf6cc79"
     }
   ],
   "golden_hex": "534d4b310500017472616365",
@@ -113,14 +129,25 @@
     "hbc_sha256": {
       "98": {
         "g0": "d1ceacc1f40097b798abf4eeaf8f2f0a663afa9ed8d8fdd5f2b2d99ee2e422a8",
-        "g1": "607bacb57bde59047aacfc9831c2d4a0d2a39812b77e4e99c7b1d2f296c423ad"
+        "g1": "ffd55f5d6d81b2a82a2700138028f58d019d8f317654c31266ff3800e06ae25e"
       },
       "99": {
         "g0": "f51e55203c85ab6fd016ab83862f81aa61cc2f441087c10ef712c2148bf7b57d",
-        "g1": "1435f40bec256fc1c62fd79135400157449ed18ef804cedd1f2437c04916174e"
+        "g1": "9b6527d960d7363abb2f7a0be3cfa18240156aad9adfcd61107e98e4efd7caaf"
       }
     },
     "original_output": "even:negative:25",
     "pseudocode_output": "even:negative:21"
+  },
+  "boofuzz": {
+    "cases": 575,
+    "frames_before_target_stopped": 17,
+    "default_frame": "545243310100057472616365315bd5a1"
+  },
+  "memprocfs": {
+    "image_sha256": "8e785901820f4614a5c74d2c9b156ec561e6c77aab19e78f755421f0b42f2d3d",
+    "dtb": "0x10000",
+    "virtual_address": "0x140001678",
+    "physical_address": "0x345678"
   }
 }
