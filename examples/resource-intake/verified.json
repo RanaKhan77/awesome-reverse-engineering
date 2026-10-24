@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-10-20T14:20:47.418756+00:00",
+  "checked_at": "2026-10-21T09:43:47.861789+00:00",
   "host": {
-    "platform": "Linux-6.1.0-53-cloud-amd64-x86_64-with-glibc2.36",
-    "python": "3.11.2",
+    "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.36",
+    "python": "3.11.17",
     "javac": "javac 17.0.20.1",
-    "node": "v24.21.0"
+    "node": "v22.23.3"
   },
   "results": [
     {
@@ -42,6 +42,12 @@
       "version": "0.1.8",
       "result": "passed",
       "scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25"
+    },
+    {
+      "name": "MemProcFS",
+      "version": "5.19.0",
+      "result": "passed",
+      "scope": "Self-authored raw image: physical read, user-supplied DTB fallback process, virtual read, virt2phys, /memory.pmem; no Windows OS analysis"
     }
   ],
   "inputs": [
@@ -66,12 +72,16 @@
       "sha256": "7b36aaf95fad7f8544eb87962b61277d383ce616d43fd880c3ee4f74a9001581"
     },
     {
+      "path": "memprocfs_probe.py",
+      "sha256": "28371a05c81ddf4af7515350adf3868b40e6584880abc490bc7b0f393f7804fb"
+    },
+    {
       "path": "verify.py",
-      "sha256": "1d06631607af8e9cfd8c0f85e55792dd1e672b2c00f75cbaaf772511e50d9b09"
+      "sha256": "5bc1c917877a7d352aa42a0d863f643c25690fb873944f52298ed6c19e4251b7"
     },
     {
       "path": "requirements.txt",
-      "sha256": "e82f3a0ec8e0920c97b12fc63d92cfe34c898c2999ac70c6dba931ea21ac8d05"
+      "sha256": "d55a1c0b3c8657ac2955f8d99a8ddc9639cb4b021fc9e7228cbc6d430f010681"
     }
   ],
   "golden_hex": "534d4b310500017472616365",
@@ -113,14 +123,20 @@
     "hbc_sha256": {
       "98": {
         "g0": "d1ceacc1f40097b798abf4eeaf8f2f0a663afa9ed8d8fdd5f2b2d99ee2e422a8",
-        "g1": "607bacb57bde59047aacfc9831c2d4a0d2a39812b77e4e99c7b1d2f296c423ad"
+        "g1": "d5f33936891fdc73684e9440c6898ba9a346813b4d95d3a89a484df3b1aae668"
       },
       "99": {
         "g0": "f51e55203c85ab6fd016ab83862f81aa61cc2f441087c10ef712c2148bf7b57d",
-        "g1": "1435f40bec256fc1c62fd79135400157449ed18ef804cedd1f2437c04916174e"
+        "g1": "1aee0a677f150b400ad20900e3782a084c2e2177ef68a6bb8360e735d65629c3"
       }
     },
     "original_output": "even:negative:25",
     "pseudocode_output": "even:negative:21"
+  },
+  "memprocfs": {
+    "image_sha256": "8e785901820f4614a5c74d2c9b156ec561e6c77aab19e78f755421f0b42f2d3d",
+    "dtb": "0x10000",
+    "virtual_address": "0x140001678",
+    "physical_address": "0x345678"
   }
 }
