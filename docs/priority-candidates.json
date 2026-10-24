@@ -816,7 +816,7 @@
       "name": "PyLingual",
       "url": "https://github.com/syssec-utd/pylingual",
       "section": "Language runtimes and packagers",
-      "description": "Model-assisted CPython 3.6+ bytecode decompiler that recompiles its output and flags code objects whose bytecode does not match; downloads large per-version models.",
+      "description": "Model-assisted CPython 3.6+ bytecode decompiler that recompiles its output and flags mismatched code objects for manual review; requires Python 3.12+ to run and downloads large per-version models.",
       "research_priority": "B",
       "decision": "added",
       "checked_at": "2026-10-21",
@@ -846,7 +846,13 @@
         "https://github.com/syssec-utd/pylingual/blob/11a1516d84a6c2aa71ec23fbd11e4b99dc8c4a86/README.md",
         "https://github.com/syssec-utd/pylingual/blob/11a1516d84a6c2aa71ec23fbd11e4b99dc8c4a86/pyproject.toml",
         "https://github.com/syssec-utd/pylingual/blob/11a1516d84a6c2aa71ec23fbd11e4b99dc8c4a86/pylingual/decompiler_config.yaml"
-      ]
+      ],
+      "target_compilers": {
+        "3.11": "3.11.15",
+        "3.12": "3.12.13",
+        "3.13": "3.13.14"
+      },
+      "maintainer_rechecked_at": "2026-10-24"
     }
   ]
 }

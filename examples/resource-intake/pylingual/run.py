@@ -11,7 +11,8 @@ import subprocess
 import tempfile
 
 SOURCE = Path(__file__).resolve().parent
-VERSIONS = ("3.11", "3.12", "3.13")
+TARGET_PYTHONS = {"3.11": "3.11.15", "3.12": "3.12.13", "3.13": "3.13.14"}
+VERSIONS = tuple(TARGET_PYTHONS)
 # Load each top-level function on its own, so a function that does not compile cannot hide the others.
 ORACLE = """
 import json, sys
@@ -42,7 +43,7 @@ INPUTS = ("fixture.py", "pinned_config.yaml", "run.py")
 
 
 def python(version, *args):
-    command = ["uv", "run", "--quiet", "--no-project", "--python", version, "python", *args]
+    command = ["uv", "run", "--quiet", "--no-project", "--python", TARGET_PYTHONS[version], "python", *args]
     return subprocess.run(command, text=True, capture_output=True)
 
 
@@ -96,8 +97,15 @@ def main():
     for version in VERSIONS:
         pyc, out = work / f"fixture.{version}.pyc", work / f"out-{version}"
         python(version, "-c", COMPILE, str(SOURCE / "fixture.py"), str(pyc)).check_returncode()
-        subprocess.run([args.pylingual, "-q", "-c", str(SOURCE / "pinned_config.yaml"), "-o", str(out), str(pyc)], check=True, capture_output=True)
+        environment = dict(os.environ)
+        environment.pop("PYLINGUAL_REDIS_HOST", None)  # a shared translation cache is not keyed by model revision
+        completed = subprocess.run([args.pylingual, "-c", str(SOURCE / "pinned_config.yaml"), "-o", str(out), str(pyc)], text=True, capture_output=True, env=environment)
+        stdout_log, stderr_log = work / f"pylingual-{version}.stdout.log", work / f"pylingual-{version}.stderr.log"
+        stdout_log.write_text(completed.stdout)
+        stderr_log.write_text(completed.stderr)
         decompiled = out / f"decompiled_fixture.{version}.py"
+        if completed.returncode or not decompiled.is_file():
+            raise SystemExit(f"PyLingual {version} exited with {completed.returncode} and did not complete decompilation; inspect {stdout_log} and {stderr_log}.")
         failures = [list(failure) for failure in re.findall(r"# \*\*\*<module>\.(\w+): Failure: (.+)", decompiled.read_text())]
         observed = observe(version, decompiled)
         behavior = observed["behavior"]
@@ -109,7 +117,9 @@ def main():
             checks = failures == [["parse_port", "Different control flow"]] and not observed["syntax_errors"] and behavior["parse_port"] == [-2, -1, -2, -2]
         if not checks:
             raise SystemExit(f"{version}: unexpected flagged failures {failures} or parse_port result {observed}")
-        results.append({"version": version, "pyc_sha256": sha256(pyc), "flagged_failures": failures,
+        compiler = python(version, "-c", "import sys; print(sys.version)")
+        compiler.check_returncode()
+        results.append({"version": version, "compiler": compiler.stdout.strip(), "pyc_sha256": sha256(pyc), "flagged_failures": failures,
                         "syntax_errors": observed["syntax_errors"], "behavior": behavior})
     report = {
         "checked_at": datetime.now(timezone.utc).date().isoformat(),
