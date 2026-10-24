@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-10-21T10:46:59.565561+00:00",
+  "checked_at": "2026-10-24T14:08:49.502647+00:00",
   "host": {
-    "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.36",
-    "python": "3.11.17",
+    "platform": "Linux-6.1.0-54-cloud-amd64-x86_64-with-glibc2.36",
+    "python": "3.11.2",
     "javac": "javac 17.0.20.1",
-    "node": "v22.23.4"
+    "node": "v20.20.2"
   },
   "results": [
     {
@@ -48,6 +48,12 @@
       "version": "0.4.2",
       "result": "passed",
       "scope": "Localhost TRC1 protocol: default frame, 575 payload mutations with correct length/CRC, sent and replied frames match; replies unread by default, UTF-8 string mutations, and a stopped target ends the run without a failure"
+    },
+    {
+      "name": "MemProcFS",
+      "version": "5.19.0",
+      "result": "passed",
+      "scope": "Self-authored raw image: physical read, user-supplied DTB fallback process, virtual read, virt2phys, /memory.pmem; no Windows OS analysis"
     }
   ],
   "inputs": [
@@ -72,12 +78,16 @@
       "sha256": "7b36aaf95fad7f8544eb87962b61277d383ce616d43fd880c3ee4f74a9001581"
     },
     {
+      "path": "memprocfs_probe.py",
+      "sha256": "28371a05c81ddf4af7515350adf3868b40e6584880abc490bc7b0f393f7804fb"
+    },
+    {
       "path": "verify.py",
-      "sha256": "e191216313945f877b23568fd4afe88ffcfd2b3402b28ca5dc139dd222a4f694"
+      "sha256": "e2ac23876d6c535f5355a836c3269caaaeb7e10f94b105e976116180a6b18e38"
     },
     {
       "path": "requirements.txt",
-      "sha256": "b33267171f85855685fac22109ef800e065ffdbe5a43fe6e00b3ef64ae6dfca6"
+      "sha256": "ca1e1d2f17a1c624b3f3ff46678acfcbac9fdee4fc23c5510cfb5653abf6cc79"
     }
   ],
   "golden_hex": "534d4b310500017472616365",
@@ -119,11 +129,11 @@
     "hbc_sha256": {
       "98": {
         "g0": "d1ceacc1f40097b798abf4eeaf8f2f0a663afa9ed8d8fdd5f2b2d99ee2e422a8",
-        "g1": "d5f33936891fdc73684e9440c6898ba9a346813b4d95d3a89a484df3b1aae668"
+        "g1": "ffd55f5d6d81b2a82a2700138028f58d019d8f317654c31266ff3800e06ae25e"
       },
       "99": {
         "g0": "f51e55203c85ab6fd016ab83862f81aa61cc2f441087c10ef712c2148bf7b57d",
-        "g1": "1aee0a677f150b400ad20900e3782a084c2e2177ef68a6bb8360e735d65629c3"
+        "g1": "9b6527d960d7363abb2f7a0be3cfa18240156aad9adfcd61107e98e4efd7caaf"
       }
     },
     "original_output": "even:negative:25",
@@ -133,5 +143,11 @@
     "cases": 575,
     "frames_before_target_stopped": 17,
     "default_frame": "545243310100057472616365315bd5a1"
+  },
+  "memprocfs": {
+    "image_sha256": "8e785901820f4614a5c74d2c9b156ec561e6c77aab19e78f755421f0b42f2d3d",
+    "dtb": "0x10000",
+    "virtual_address": "0x140001678",
+    "physical_address": "0x345678"
   }
 }

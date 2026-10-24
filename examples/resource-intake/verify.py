@@ -1,11 +1,13 @@
-"""Reproduce seven narrow resource examples with independent expected outputs."""
+"""Reproduce eight narrow resource examples with independent expected outputs."""
 import argparse
+import ctypes.util
 from datetime import datetime, timezone
 import hashlib
 from importlib.metadata import PackageNotFoundError, version
 import csv
 import io
 import json
+import os
 from pathlib import Path
 import platform
 import re
@@ -39,6 +41,9 @@ DUCK_KEY = b"duck-key"
 DUCK_PLAIN = b"c2=http://192.0.2.10/gate;c2=http://198.51.100.7/gate;campaign=trace-7;sleep=300"
 DUCK_CONFIG = {"family": "duckcfg", "urls": ["http://192.0.2.10/gate", "http://198.51.100.7/gate"], "campaign": "trace-7", "sleep": 300}
 TRC1_CASES = 575
+MEMPROCFS_PACKAGES = {"memprocfs": "5.19.0", "leechcorepyc": "2.23.3"}
+PML4, PDPT, PD, PT, PAGE = 0x10000, 0x11000, 0x12000, 0x13000, 0x345000
+FIXTURE_VA = 0x140001678
 
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -54,8 +59,8 @@ def checksum(data):
     return (~total) & 0xFFFF
 
 
-def run(*args):
-    completed = subprocess.run(args, text=True, capture_output=True, check=True)
+def run(*args, env=None):
+    completed = subprocess.run(args, text=True, capture_output=True, check=True, env=env)
     return completed.stdout.strip()
 
 
@@ -274,8 +279,54 @@ def verify_boofuzz(work):
     return {"cases": TRC1_CASES, "frames_before_target_stopped": len(crashed.frames), "default_frame": rendered.hex()}
 
 
+def memprocfs_host():
+    # The pinned wheels are Linux x86-64 and Windows x64; only Linux x86-64 is exercised here.
+    return platform.system() == "Linux" and platform.machine() == "x86_64"
+
+
+def required_packages():
+    packages = {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1", "boofuzz": "0.4.2"}
+    if memprocfs_host():
+        packages.update(MEMPROCFS_PACKAGES)
+    return packages
+
+
+def memprocfs_env(leechcore_dir):
+    """Prepend leechcore.so's directory, keeping any library path the host already needs."""
+    existing = os.environ.get("LD_LIBRARY_PATH")
+    return dict(os.environ, LD_LIBRARY_PATH=os.pathsep.join([str(leechcore_dir), existing] if existing else [str(leechcore_dir)]))
+
+
+def memprocfs_image(path):
+    image = bytearray(16 * 1024 * 1024)
+    indexes = [(FIXTURE_VA >> shift) & 0x1FF for shift in (39, 30, 21, 12)]
+    for table, entry, index in zip((PML4, PDPT, PD, PT), (PDPT, PD, PT, PAGE), indexes):
+        image[table + index * 8:table + index * 8 + 8] = struct.pack("<Q", entry | 0x7)
+    image[0x1000:0x1010] = b"MPFS-PHYS-MARK-1"
+    image[PAGE + 0x678:PAGE + 0x688] = b"MPFS-VIRT-MARK-2"
+    path.write_bytes(image)
+
+
+def verify_memprocfs(work):
+    if not ctypes.util.find_library("usb-1.0"):
+        raise SystemExit("MemProcFS needs the libusb-1.0 system library; install it (for example `sudo apt-get install libusb-1.0-0`) and retry.")
+    import leechcorepyc
+
+    image = work / "memprocfs.raw"
+    memprocfs_image(image)
+    # The memprocfs wheel does not bundle leechcore.so; leechcorepyc provides it.
+    env = memprocfs_env(Path(leechcorepyc.__file__).parent)
+    output = run(sys.executable, str(SOURCE / "memprocfs_probe.py"), str(image), hex(PML4), hex(FIXTURE_VA), env=env)
+    observed = json.loads(output.splitlines()[-1])
+    assert bytes.fromhex(observed["physical"]) == b"MPFS-PHYS-MARK-1" == bytes.fromhex(observed["pmem_file"])
+    assert observed["processes"] == [[1, "unknown_process", PML4]], observed["processes"]
+    assert bytes.fromhex(observed["virtual"]) == b"MPFS-VIRT-MARK-2" and observed["virt2phys"] == PAGE + 0x678
+    assert "memory.pmem" in observed["root"]
+    return sha256(image)
+
+
 def verify(work, jar):
-    for package, expected in {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1", "boofuzz": "0.4.2"}.items():
+    for package, expected in required_packages().items():
         try:
             installed = version(package)
         except PackageNotFoundError as exc:
@@ -358,6 +409,11 @@ def verify(work, jar):
     duck_digest = verify_malduck(work)
     hbc_digests = verify_hermes_dec(work)
     boofuzz_summary = verify_boofuzz(work)
+    memprocfs = {"name": "MemProcFS", "version": "5.19.0", "result": "skipped", "scope": "This check runs on Linux x86-64 only"}
+    image_digest = None
+    if memprocfs_host():
+        image_digest = verify_memprocfs(work)
+        memprocfs.update(result="passed", scope="Self-authored raw image: physical read, user-supplied DTB fallback process, virtual read, virt2phys, /memory.pmem; no Windows OS analysis")
 
     return {
         "checked_at": datetime.now(timezone.utc).isoformat(),
@@ -370,8 +426,9 @@ def verify(work, jar):
             {"name": "Malduck", "version": "4.4.1", "result": "passed", "scope": "Self-authored YARA-triggered extractor and RC4 config; wrong-key and no-marker samples yield no config"},
             {"name": "hermes-dec", "version": "0.1.8", "result": "passed", "scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25"},
             {"name": "boofuzz", "version": "0.4.2", "result": "passed", "scope": "Localhost TRC1 protocol: default frame, 575 payload mutations with correct length/CRC, sent and replied frames match; replies unread by default, UTF-8 string mutations, and a stopped target ends the run without a failure"},
+            memprocfs,
         ],
-        "inputs": [{"path": name, "sha256": sha256(SOURCE / name)} for name in ("BranchDemo.java", "Probe.java", "hbc_fixture.js", "malduck_modules/duckcfg/__init__.py", "malduck_modules/duckcfg/duckcfg.yar", "verify.py", "requirements.txt")],
+        "inputs": [{"path": name, "sha256": sha256(SOURCE / name)} for name in ("BranchDemo.java", "Probe.java", "hbc_fixture.js", "malduck_modules/duckcfg/__init__.py", "malduck_modules/duckcfg/duckcfg.yar", "memprocfs_probe.py", "verify.py", "requirements.txt")],
         "golden_hex": GOLDEN.hex(),
         "vineflower_artifact": {"url": JAR_URL, "sha256": JAR_SHA256},
         "expected_main": "25", "expected_branches": EXPECTED_BRANCHES.splitlines(),
@@ -380,6 +437,7 @@ def verify(work, jar):
                        "hbc_sha256": {str(v): d for v, d in hbc_digests.items()},
                        "original_output": HBC_ORIGINAL_OUTPUT, "pseudocode_output": HBC_PSEUDOCODE_OUTPUT},
         "boofuzz": boofuzz_summary,
+        "memprocfs": {"image_sha256": image_digest, "dtb": hex(PML4), "virtual_address": hex(FIXTURE_VA), "physical_address": hex(PAGE + 0x678)},
     }
 
 

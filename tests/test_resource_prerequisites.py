@@ -2,6 +2,8 @@
 import importlib.util
 import hashlib
 import io
+import platform
+import re
 from importlib.metadata import PackageNotFoundError
 from pathlib import Path
 import subprocess
@@ -18,6 +20,41 @@ verifier = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(verifier)
 
 
+# Independent of the verifier: (sys_platform, platform_machine) -> packages pip should install beyond the
+# always-required pins. MemProcFS is exercised only on Linux x86-64.
+HOST_MATRIX = {
+    ("linux", "x86_64"): {"memprocfs", "leechcorepyc"},
+    ("linux", "aarch64"): set(),
+    ("darwin", "arm64"): set(),
+    ("darwin", "x86_64"): set(),
+    ("win32", "AMD64"): set(),
+}
+PLATFORM_SYSTEM = {"linux": "Linux", "darwin": "Darwin", "win32": "Windows"}
+
+
+def requirements():
+    """Yield (name, version, marker) from requirements.txt without third-party packages."""
+    for line in (SCRIPT.parent / "requirements.txt").read_text().splitlines():
+        if line and not line.startswith("#"):
+            requirement, _, marker = line.partition(";")
+            name, pinned = requirement.strip().split("==", 1)
+            yield name, pinned, marker.strip()
+
+
+def marker_selects(marker, sys_platform, machine):
+    """Evaluate the `name == "value"` clauses joined by `and` that requirements.txt uses."""
+    if not marker:
+        return True
+    values = {"sys_platform": sys_platform, "platform_machine": machine}
+    selected = True
+    for clause in marker.split(" and "):
+        match = re.fullmatch(r'\s*(sys_platform|platform_machine)\s*==\s*"([^"]*)"\s*', clause)
+        if not match:
+            raise AssertionError(f"Unsupported requirement marker: {marker}")
+        selected = selected and values[match[1]] == match[2]
+    return selected
+
+
 class Prerequisites(unittest.TestCase):
     def test_missing_dependencies_print_install_command_without_traceback(self):
         with tempfile.TemporaryDirectory() as output:
@@ -32,7 +69,7 @@ class Prerequisites(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
 
     def test_all_missing_pinned_packages_are_reported(self):
-        packages = dict(line.split("==", 1) for line in (SCRIPT.parent / "requirements.txt").read_text().splitlines() if line and not line.startswith("#"))
+        packages = {name: pinned for name, pinned, marker in requirements() if marker_selects(marker, sys.platform, platform.machine())}
         for missing in packages:
             def installed(name):
                 if name == missing:
@@ -45,6 +82,36 @@ class Prerequisites(unittest.TestCase):
     def test_wrong_pinned_version_is_actionable(self):
         with patch.object(verifier, "version", return_value="0.0"), self.assertRaisesRegex(SystemExit, "Expected construct==2.10.70"):
             verifier.verify(Path("unused"), None)
+
+    def test_requirement_markers_match_verifier_on_each_host(self):
+        always = {name for name, _, marker in requirements() if not marker}
+        for (sys_platform, machine), extra in HOST_MATRIX.items():
+            installed = {name for name, _, marker in requirements() if marker_selects(marker, sys_platform, machine)}
+            with self.subTest(host=(sys_platform, machine)), patch.object(verifier.platform, "system", return_value=PLATFORM_SYSTEM[sys_platform]), patch.object(verifier.platform, "machine", return_value=machine):
+                self.assertEqual(installed, always | extra)
+                self.assertEqual(set(verifier.required_packages()), installed)
+
+    def test_leechcore_path_keeps_existing_library_path(self):
+        with patch.dict(verifier.os.environ, {"LD_LIBRARY_PATH": "/opt/existing/lib"}):
+            env = verifier.memprocfs_env(Path("/wheel/leechcorepyc"))
+        self.assertEqual(env["LD_LIBRARY_PATH"].split(verifier.os.pathsep), ["/wheel/leechcorepyc", "/opt/existing/lib"])
+        with patch.dict(verifier.os.environ, clear=True):
+            self.assertEqual(verifier.memprocfs_env(Path("/wheel/leechcorepyc"))["LD_LIBRARY_PATH"], "/wheel/leechcorepyc")
+
+    def test_memprocfs_pins_are_required_only_on_its_host(self):
+        installed = {name: pinned for name, pinned, _ in requirements()}
+        for host, expected in [(("Darwin", "arm64"), "javac"), (("Linux", "x86_64"), "Missing Python dependency: memprocfs")]:
+            def version(name):
+                if name == "memprocfs":
+                    raise PackageNotFoundError(name)
+                return installed[name]
+            with self.subTest(host=host), patch.object(verifier.platform, "system", return_value=host[0]), patch.object(verifier.platform, "machine", return_value=host[1]), patch.object(verifier, "version", side_effect=version), patch.object(verifier, "require_java", side_effect=SystemExit("javac")):
+                with self.assertRaisesRegex(SystemExit, expected):
+                    verifier.verify(Path("unused"), None)
+
+    def test_missing_libusb_is_actionable(self):
+        with patch.object(verifier.ctypes.util, "find_library", return_value=None), self.assertRaisesRegex(SystemExit, "libusb-1.0"):
+            verifier.verify_memprocfs(Path("unused"))
 
     def test_java_versions_on_either_output_stream(self):
         for executable, stdout, stderr in [
