@@ -11,7 +11,7 @@ import sys
 import tempfile
 import tarfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 
 SCRIPT = Path(__file__).resolve().parents[1] / "examples/resource-intake/verify.py"
@@ -153,6 +153,27 @@ class Prerequisites(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "pinned Hermes compilers require"):
                 verifier.hermesc(Path("unused"), 98)
             download.assert_not_called()
+
+
+class ProtocolReads(unittest.TestCase):
+    def test_fragmented_header_and_early_eof(self):
+        # A known TRC1 frame and its CRC, independently encoded with struct/zlib in the review.
+        valid = bytes.fromhex("545243310100057472616365315bd5a1")
+        for frame, expected in ((valid, b"OK" + bytes.fromhex("315bd5a1")), (b"TRC1", b"BAD")):
+            with self.subTest(frame=frame):
+                server = verifier.Trc1Server()
+                server.sock.close()
+                stream = io.BytesIO(frame)
+                connection = MagicMock()
+                connection.__enter__.return_value = connection
+                connection.recv.side_effect = lambda size: stream.read(min(size, 2))
+                connection.sendall.side_effect = lambda reply: server.stopping.set()
+                listener = MagicMock()
+                listener.accept.return_value = (connection, ("127.0.0.1", 12345))
+                with patch.object(server, "sock", listener):
+                    server.run()
+                self.assertEqual(server.frames, [frame])
+                connection.sendall.assert_called_once_with(expected)
 
 
 if __name__ == "__main__":
