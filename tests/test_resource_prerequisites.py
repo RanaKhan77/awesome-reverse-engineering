@@ -11,7 +11,7 @@ import sys
 import tempfile
 import tarfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 
 SCRIPT = Path(__file__).resolve().parents[1] / "examples/resource-intake/verify.py"
@@ -99,7 +99,7 @@ class Prerequisites(unittest.TestCase):
             self.assertEqual(verifier.memprocfs_env(Path("/wheel/leechcorepyc"))["LD_LIBRARY_PATH"], "/wheel/leechcorepyc")
 
     def test_memprocfs_pins_are_required_only_on_its_host(self):
-        installed = dict(verifier.MEMPROCFS_PACKAGES, **{"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1"})
+        installed = {name: pinned for name, pinned, _ in requirements()}
         for host, expected in [(("Darwin", "arm64"), "javac"), (("Linux", "x86_64"), "Missing Python dependency: memprocfs")]:
             def version(name):
                 if name == "memprocfs":
@@ -153,6 +153,27 @@ class Prerequisites(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "pinned Hermes compilers require"):
                 verifier.hermesc(Path("unused"), 98)
             download.assert_not_called()
+
+
+class ProtocolReads(unittest.TestCase):
+    def test_fragmented_header_and_early_eof(self):
+        # A known TRC1 frame and its CRC, independently encoded with struct/zlib in the review.
+        valid = bytes.fromhex("545243310100057472616365315bd5a1")
+        for frame, expected in ((valid, b"OK" + bytes.fromhex("315bd5a1")), (b"TRC1", b"BAD")):
+            with self.subTest(frame=frame):
+                server = verifier.Trc1Server()
+                server.sock.close()
+                stream = io.BytesIO(frame)
+                connection = MagicMock()
+                connection.__enter__.return_value = connection
+                connection.recv.side_effect = lambda size: stream.read(min(size, 2))
+                connection.sendall.side_effect = lambda reply: server.stopping.set()
+                listener = MagicMock()
+                listener.accept.return_value = (connection, ("127.0.0.1", 12345))
+                with patch.object(server, "sock", listener):
+                    server.run()
+                self.assertEqual(server.frames, [frame])
+                connection.sendall.assert_called_once_with(expected)
 
 
 if __name__ == "__main__":

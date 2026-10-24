@@ -1,6 +1,6 @@
-# Seven bounded resource examples
+# Bounded resource examples
 
-These self-authored fixtures demonstrate Construct, Scapy, YARA-X, Vineflower, Malduck, hermes-dec, and MemProcFS. They are small selection examples, not upstream test suites or evidence of full platform/version support.
+These self-authored fixtures demonstrate Construct, Scapy, YARA-X, Vineflower, Malduck, hermes-dec, MemProcFS, and boofuzz. They are small selection examples, not upstream test suites or evidence of full platform/version support.
 
 Use Python 3.11 with `venv`/`pip` support, JDK 17, Node.js, and an Internet connection for the pinned packages, JAR, and Hermes compilers. From the repository root:
 
@@ -37,6 +37,7 @@ $resourcePython = Join-Path $resourceExamplesDir "venv\Scripts\python.exe"
 | Malduck 4.4.1 | A [self-authored extractor](malduck_modules/duckcfg/__init__.py) and [YARA rule](malduck_modules/duckcfg/duckcfg.yar); a sample with marker `DKCFG1`, an 8-byte key, and a config encrypted by an independent RC4 implementation yields two C2 URLs, campaign `trace-7`, and sleep `300`; wrong-key and no-marker samples yield no config | Extractor framework, procmem reads, and RC4 only; no real malware family |
 | hermes-dec 0.1.8 | [`hbc_fixture.js`](hbc_fixture.js) compiled by `hermes-compiler` 250829098.0.19 (HBC 98) and 260318099.0.4 (HBC 99) at `-g0` and `-g1`; header version, disassembly, and pseudo-code landmarks (function names, strings, `<Mod>`, constant `7`) | See the limits below |
 | MemProcFS 5.19.0 | A 16 MiB raw image with a self-built x64 page table; with `-dtb 0x10000` the [probe](memprocfs_probe.py) shows one `unknown_process`, reads `MPFS-PHYS-MARK-1` at physical `0x1000` and through `/memory.pmem`, and translates `0x140001678` to physical `0x345678` where it reads `MPFS-VIRT-MARK-2` | Physical-memory, page-table, and virtual-file-system API on Linux x86-64 only; no Windows OS analysis |
+| boofuzz 0.4.2 | A made-up TRC1 protocol (`TRC1`, kind, big-endian length, payload, big-endian CRC-32) described with `Size` and `Checksum` blocks; the default frame matches bytes built with `struct` and `zlib`, and a localhost server receives all 575 payload mutations with a correct length and CRC, replying to each | One-field-at-a-time fuzzing (`max_depth=1`) against a localhost server only; see the limits below |
 
 The branch oracle for `Probe.java` is:
 
@@ -53,6 +54,12 @@ The hermes-dec check also records three limits:
 - `hbc-file-parser` warns that HBC 98 and 99 are not formally supported.
 - With `-g1` location info, `hbc-file-parser` prints the header and then raises a `TypeError` in `debug_info_parser.py`; `-g0` files parse cleanly. The disassembler and decompiler succeed at both levels.
 - The original fixture prints `even:negative:25` under Node.js; executing the pseudo-code prints `even:negative:21`, because register variables are shared across functions instead of being local to each call.
+
+The boofuzz check also records three limits:
+
+- Replies to fuzzed messages are read only with `receive_data_after_fuzz=True`; by default `last_recv` stays empty.
+- `String` mutations are text: byte patterns such as `\xde\xad\xbe\xef` are sent UTF-8 encoded, and `max_len` counts characters, so a 48-character limit produced a 96-byte payload.
+- Without a process monitor or restart callback, a target that stops listening ends the run after 17 of 575 cases with only an info message ("Ending fuzzing"); no test case is marked failed and `fuzz()` returns normally.
 
 Without `-dtb`, MemProcFS rejects a raw image that contains no identifiable operating system (`Unable to locate valid DTB`). The Linux `memprocfs` wheel does not include `leechcore.so`; the runner uses the one from `leechcorepyc` by starting the probe with `LD_LIBRARY_PATH` pointing at its directory.
 
