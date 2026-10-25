@@ -239,6 +239,7 @@ Run samples only in isolated, disposable environments, and follow your organizat
 - [Capstone](https://github.com/capstone-engine/capstone) - Multi-architecture disassembly library for building analysis tools.
 - [Diaphora](https://github.com/joxeankoret/diaphora) - Binary diffing plugin for comparing functions and transferring analysis in IDA.
 - [ghidriff](https://github.com/clearbluejar/ghidriff) - Ghidra-based command-line binary diffing engine with JSON, Markdown, and optional HTML reports; requires compatible Ghidra, PyGhidra, and JDK versions.
+- [Keystone](https://github.com/keystone-engine/keystone) - Multi-architecture assembler library, the counterpart to Capstone, for turning assembly text into machine code when patching binaries or building test inputs; GPL-2.0 with a separate commercial license, and the latest PyPI release (0.9.2, 2020) ships wheels only for x86 and x86-64 hosts.
 - [Miasm](https://github.com/cea-sec/miasm) - Python reverse-engineering framework with an intermediate representation, emulation, symbolic execution, and assemblers and disassemblers for several architectures.
 - [Qiling](https://github.com/qilingframework/qiling) - Emulates binaries with operating-system services for scripted runtime analysis.
 - [Triton](https://github.com/JonathanSalwan/Triton) - Dynamic binary analysis library with symbolic execution, taint analysis, and AST representations of instruction semantics, usable from C++ or Python.
