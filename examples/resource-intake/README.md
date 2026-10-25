@@ -17,7 +17,7 @@ The Hermes fixture additionally needs Node.js (CI uses Node.js 22). Its pinned c
 
 MemProcFS runs only on Linux x86-64, where it also needs the system `libusb-1.0` library (`sudo apt-get install libusb-1.0-0` on Debian/Ubuntu). Its pinned wheels are installed only on that host, and on other hosts the runner records MemProcFS as `skipped`.
 
-Keystone and Capstone are also installed and exercised only on Linux x86-64. Keystone 0.9.2 has no wheel for ARM hosts, where pip would build it from source with CMake and a C++ compiler; on other hosts the runner records Keystone as `skipped`.
+The Keystone check and its explicit Keystone/Capstone pins are exercised only on Linux x86-64; Capstone may also be installed elsewhere as another package's dependency. Keystone 0.9.2 has no wheel for ARM hosts, where pip would build it from source with CMake and a C++ compiler; on other hosts the runner records Keystone as `skipped`.
 
 On Windows, use this PowerShell block with Python 3.11 and JDK 17 or newer (`java` and `javac` on `PATH`). The verifier checks both Java versions before running the fixtures. Use `python` in place of `py -3.11` if that is your Python 3.11 launcher.
 
@@ -66,7 +66,7 @@ The boofuzz check also records three limits:
 
 The Keystone check also records two limits:
 
-- A branch to an absolute target is encoded as an offset from the address passed to `asm()`, so the same text gives different bytes at another base.
+- A branch to an absolute target is encoded as an offset from the address passed to `asm()`, so the same text gives different bytes at another base. A RIP-relative memory operand such as `[rip + 8]` instead keeps its literal displacement bytes at both bases; moving those bytes changes the address they access.
 - An unknown mnemonic fails with `KS_ERR_ASM_MNEMONICFAIL`, but an ARM64 immediate that one `MOV` cannot encode (`mov x0, #0x12345678`) fails with errno 561, which the 0.9.2 Python binding has no constant for and reports only as "Unknown error".
 
 Without `-dtb`, MemProcFS rejects a raw image that contains no identifiable operating system (`Unable to locate valid DTB`). The Linux `memprocfs` wheel does not include `leechcore.so`; the runner uses the one from `leechcorepyc` by starting the probe with `LD_LIBRARY_PATH` pointing at its directory.

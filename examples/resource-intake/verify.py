@@ -357,6 +357,10 @@ def verify_keystone():
         assert text == source, text
         assert bytes(assembler.asm(text, ASM_BASE)[0]).hex() == expected
 
+    x64 = keystone.Ks(keystone.KS_ARCH_X86, keystone.KS_MODE_64)
+    # RIP operands contain a literal displacement; changing the base does not relocate it.
+    for base in (0x1000, 0x2000):
+        assert bytes(x64.asm("mov eax, dword ptr [rip + 8]", base)[0]).hex() == "8b0508000000"
     arm64 = keystone.Ks(keystone.KS_ARCH_ARM64, keystone.KS_MODE_LITTLE_ENDIAN)
     # Relative branches are encoded against the address passed to asm().
     assert bytes(arm64.asm("b #0x1010", 0x2000)[0]).hex() == A64_BACKWARD_BRANCH
@@ -462,7 +466,7 @@ def verify(work, jar):
     keystone_result = {"name": "Keystone", "version": "0.9.2", "result": "skipped", "scope": "This check runs on Linux x86-64 only"}
     if keystone_host():
         verify_keystone()
-        keystone_result.update(result="passed", scope="x86-64 and ARM64: hand-encoded bytes, Capstone 5.0.9 disassembly and reassembly, base-relative branch, mnemonic error code; an unencodable ARM64 immediate reports errno 561 as \"Unknown error\"")
+        keystone_result.update(result="passed", scope="x86-64 and ARM64: hand-encoded bytes, Capstone 5.0.9 disassembly and reassembly, base-relative branch versus literal RIP displacement, mnemonic error code; an unencodable ARM64 immediate reports errno 561 as \"Unknown error\"")
     memprocfs = {"name": "MemProcFS", "version": "5.19.0", "result": "skipped", "scope": "This check runs on Linux x86-64 only"}
     image_digest = None
     if memprocfs_host():
