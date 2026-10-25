@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-10-20T14:20:47.418756+00:00",
+  "checked_at": "2026-10-25T10:01:38.336706+00:00",
   "host": {
-    "platform": "Linux-6.1.0-53-cloud-amd64-x86_64-with-glibc2.36",
-    "python": "3.11.2",
-    "javac": "javac 17.0.20.1",
-    "node": "v24.21.0"
+    "platform": "Linux-6.1.0-54-cloud-amd64-x86_64-with-glibc2.36",
+    "python": "3.11.15",
+    "javac": "javac 17.0.21",
+    "node": "v20.20.2"
   },
   "results": [
     {
@@ -42,6 +42,24 @@
       "version": "0.1.8",
       "result": "passed",
       "scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25"
+    },
+    {
+      "name": "boofuzz",
+      "version": "0.4.2",
+      "result": "passed",
+      "scope": "Localhost TRC1 protocol: default frame, 575 payload mutations with correct length/CRC, sent and replied frames match; replies unread by default, UTF-8 string mutations, and a stopped target ends the run without a failure"
+    },
+    {
+      "name": "MemProcFS",
+      "version": "5.19.0",
+      "result": "passed",
+      "scope": "Self-authored raw image: physical read, user-supplied DTB fallback process, virtual read, virt2phys, /memory.pmem; no Windows OS analysis"
+    },
+    {
+      "name": "Keystone",
+      "version": "0.9.2",
+      "result": "passed",
+      "scope": "x86-64 and ARM64: hand-encoded bytes, Capstone 5.0.9 disassembly and reassembly, base-relative branch versus literal RIP displacement, mnemonic error code; an unencodable ARM64 immediate reports errno 561 as \"Unknown error\""
     }
   ],
   "inputs": [
@@ -66,12 +84,16 @@
       "sha256": "7b36aaf95fad7f8544eb87962b61277d383ce616d43fd880c3ee4f74a9001581"
     },
     {
+      "path": "memprocfs_probe.py",
+      "sha256": "28371a05c81ddf4af7515350adf3868b40e6584880abc490bc7b0f393f7804fb"
+    },
+    {
       "path": "verify.py",
-      "sha256": "1d06631607af8e9cfd8c0f85e55792dd1e672b2c00f75cbaaf772511e50d9b09"
+      "sha256": "c8b028e332e8d94416cd4c5c8a33321168345e563fc066835a903f2a171dce15"
     },
     {
       "path": "requirements.txt",
-      "sha256": "e82f3a0ec8e0920c97b12fc63d92cfe34c898c2999ac70c6dba931ea21ac8d05"
+      "sha256": "7cb39a2d7055d308366664a6aea5087ca494f0b201d03c020da7bf25c50a9ef9"
     }
   ],
   "golden_hex": "534d4b310500017472616365",
@@ -113,14 +135,37 @@
     "hbc_sha256": {
       "98": {
         "g0": "d1ceacc1f40097b798abf4eeaf8f2f0a663afa9ed8d8fdd5f2b2d99ee2e422a8",
-        "g1": "607bacb57bde59047aacfc9831c2d4a0d2a39812b77e4e99c7b1d2f296c423ad"
+        "g1": "f13de683418a70df98abdaf607c4ca828e83403f621d38b5294696a1e616bf3f"
       },
       "99": {
         "g0": "f51e55203c85ab6fd016ab83862f81aa61cc2f441087c10ef712c2148bf7b57d",
-        "g1": "1435f40bec256fc1c62fd79135400157449ed18ef804cedd1f2437c04916174e"
+        "g1": "8c370f14502c8f7175f74acddf04a2097600dffb4e038b7b50e22e12fcb6eb00"
       }
     },
     "original_output": "even:negative:25",
     "pseudocode_output": "even:negative:21"
+  },
+  "boofuzz": {
+    "cases": 575,
+    "frames_before_target_stopped": 17,
+    "default_frame": "545243310100057472616365315bd5a1"
+  },
+  "memprocfs": {
+    "image_sha256": "8e785901820f4614a5c74d2c9b156ec561e6c77aab19e78f755421f0b42f2d3d",
+    "dtb": "0x10000",
+    "virtual_address": "0x140001678",
+    "physical_address": "0x345678"
+  },
+  "keystone": {
+    "base": "0x1000",
+    "x64": {
+      "source": "push rbp; mov rbp, rsp; mov eax, dword ptr [rbx + rcx*4 + 8]; xor eax, eax; pop rbp; ret",
+      "bytes": "554889e58b448b0831c05dc3"
+    },
+    "arm64": {
+      "source": "mov x0, #1; add x1, x2, x3; ldr x0, [x1, #8]; b #0x1010; ret",
+      "bytes": "200080d24100038b200440f901000014c0035fd6",
+      "backward_branch_at_0x2000": "04fcff17"
+    }
   }
 }

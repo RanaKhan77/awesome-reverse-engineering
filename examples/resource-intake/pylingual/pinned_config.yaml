@@ -1,0 +1,34 @@
+# PyLingual model config with the Hugging Face revisions observed on 2026-10-19.
+# Tokenizers are loaded without a revision argument, so this file cannot pin them.
+v3.11:
+  SEGMENTATION_MODEL:
+    REPO: syssec-utd/py311-pylingual-v1-segmenter
+    REVISION: db194efaa37d0b6b46b5bf296e43b061f131c907
+    TOKENIZER: syssec-utd/py311-pylingual-v1-tokenizer
+
+  STATEMENT_MODEL:
+    REPO: syssec-utd/py311-pylingual-v1-statement
+    REVISION: 5d359e2fdb452918967487e5f451cb29611a0971
+    TOKENIZER: syssec-utd/py311-pylingual-v1-tok
+
+v3.12:
+  SEGMENTATION_MODEL:
+    REPO: syssec-utd/py312-pylingual-v1-segmenter
+    REVISION: 70caa2ed79f20e14835f28cdf874d552fb2ba767
+    TOKENIZER: syssec-utd/py312-pylingual-v1-tokenizer
+
+  STATEMENT_MODEL:
+    REPO: syssec-utd/py312-pylingual-v1-statement
+    REVISION: 3a01f4ae752d7492350d0c0932c36849e59a6b1b
+    TOKENIZER: syssec-utd/py312-pylingual-v1-tok
+
+v3.13:
+  SEGMENTATION_MODEL:
+    REPO: syssec-utd/py313-pylingual-v3-segmenter
+    REVISION: b7cdaf8237695705feedc1da6fb90775647dce3d
+    TOKENIZER: syssec-utd/py313-pylingual-v3-tokenizer
+
+  STATEMENT_MODEL:
+    REPO: syssec-utd/py313-pylingual-v3-statement
+    REVISION: 9251d889a7b54c8b255a44e22ba8b33d7fe5a30f
+    TOKENIZER: syssec-utd/py313-pylingual-v3-tok

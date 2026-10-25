@@ -1,0 +1,1191 @@
+{
+  "checked_at": "2026-10-25",
+  "next_review": "2026-11-25",
+  "baseline_main": "6d530add7680a5e45fd56f00712f06c689c82681",
+  "scope": "51 new documented resources; existing MemProcFS, PyLingual, boofuzz and Keystone descriptions and execution evidence are preserved",
+  "evidence_boundary": "Primary-source/document walkthroughs; no execution verification is claimed for these 51 records. Existing execution examples remain separately scoped.",
+  "license_boundary": "API values are metadata, not a complete audit of bundled code, samples, codecs or hardware licenses.",
+  "records": [
+    {
+      "name": "Corkami PoCs",
+      "url": "https://github.com/corkami/pocs",
+      "description": "Minimal and unusual executable and document samples for studying file-format edge cases and parser behavior.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Minimal and unusual executable and document samples for studying file-format edge cases and parser behavior",
+      "constraints": "Read selected PE/PDF examples and compare their byte layout with the documented format; no samples were executed. Licensing must be checked per upstream file.",
+      "sources": [
+        "https://raw.githubusercontent.com/corkami/pocs/6d277c83efdceb6916ee8c6efe6ff0639cc6193f/README.md"
+      ],
+      "source_commit": "6d277c83efdceb6916ee8c6efe6ff0639cc6193f",
+      "source_date": "2024-12-22T21:19:50Z",
+      "archived": false,
+      "license_api": null,
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "Hextree",
+      "url": "https://www.hextree.io/",
+      "description": "Hands-on mobile and hardware reverse-engineering courses and interactive labs; **Commercial**, with some free content.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Hands-on mobile and hardware reverse-engineering courses and interactive labs",
+      "constraints": "Official page separates free signup/material from a paid subscription. No paid course or hardware lab was completed.",
+      "sources": [
+        "https://www.hextree.io/"
+      ],
+      "source_commit": null,
+      "source_date": null,
+      "archived": null,
+      "license_api": null,
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "Malware Analysis Training",
+      "url": "https://github.com/hasherezade/malware_training_vol1",
+      "description": "Windows malware-analysis course with programming, Windows-internals, and reversing exercises; labs need a suitable Windows analysis environment.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Windows malware-analysis course with programming, Windows-internals, and reversing exercises",
+      "constraints": "The course links CC BY 4.0 while its badge mentions 3.0; this review does not resolve that discrepancy or grant rights to sample binaries.",
+      "sources": [
+        "https://raw.githubusercontent.com/hasherezade/malware_training_vol1/acf72d45009140fed514c1dfa429122f01a2f6c0/README.md"
+      ],
+      "source_commit": "acf72d45009140fed514c1dfa429122f01a2f6c0",
+      "source_date": "2024-07-01T21:59:05Z",
+      "archived": false,
+      "license_api": null,
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "Malware Unicorn RE101",
+      "url": "https://malwareunicorn.org/workshops/re101.html",
+      "description": "Introductory Windows malware-reversing workshop covering x86 assembly, triage, and debugging; its VM-based lab instructions use older software images.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Introductory Windows malware-reversing workshop covering x86 assembly, triage, and debugging",
+      "constraints": "The official lab lists 8 GB RAM and 40 GB storage and a Windows 10 VM image updated in 2019; no supplied malware/VM image was executed.",
+      "sources": [
+        "https://malwareunicorn.org/workshops/re101.html"
+      ],
+      "source_commit": null,
+      "source_date": null,
+      "archived": null,
+      "license_api": null,
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "Reverse Engineering by Kevin Thomas",
+      "url": "https://github.com/mytechnotalent/Reverse-Engineering",
+      "description": "Annotated assembly and reverse-engineering lessons across x86, x64, ARM, AVR, and RISC-V, with lesson-specific toolchain and hardware requirements.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Annotated assembly and reverse-engineering lessons across x86, x64, ARM, AVR, and RISC-V, with lesson-specific toolchain and hardware requirements",
+      "constraints": "Annotated assembly and reverse-engineering lessons across x86, x64, ARM, AVR, and RISC-V, with lesson-specific toolchain and hardware requirements.",
+      "sources": [
+        "https://raw.githubusercontent.com/mytechnotalent/Reverse-Engineering/d0a0140a5c2222db451c27859b11ef16c50329c1/README.md"
+      ],
+      "source_commit": "d0a0140a5c2222db451c27859b11ef16c50329c1",
+      "source_date": "2026-10-24T12:19:23Z",
+      "archived": false,
+      "license_api": "Apache-2.0",
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "REDasm",
+      "url": "https://github.com/redasm-dev/redasm",
+      "description": "Native disassembler and analysis GUI with legacy-format support; Windows and Linux are the primary tested hosts, while other platform builds have lower support tiers.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Native disassembler and analysis GUI with legacy-format support",
+      "constraints": "The reviewed source identifies Windows/Linux as actively tested; macOS/FreeBSD are CI-tested without manual GUI validation and Haiku is compile-only.",
+      "sources": [
+        "https://raw.githubusercontent.com/redasm-dev/redasm/b62b81b06faa7c31bd12e03cee71634e9ed2c187/README.md"
+      ],
+      "source_commit": "b62b81b06faa7c31bd12e03cee71634e9ed2c187",
+      "source_date": "2026-10-23T10:01:24Z",
+      "archived": false,
+      "license_api": "GPL-3.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v4.0.0-beta3",
+        "published_at": "2026-09-02T17:52:19Z",
+        "url": "https://github.com/redasm-dev/redasm/releases/tag/v4.0.0-beta3"
+      }
+    },
+    {
+      "name": "rev.ng",
+      "url": "https://github.com/revng/revng",
+      "description": "LLVM- and QEMU-based binary-analysis framework and decompiler for inspecting and transforming native code; source builds need its documented toolchain.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "LLVM- and QEMU-based binary-analysis framework and decompiler for inspecting and transforming native code",
+      "constraints": "Whole project is GPLv2 due to components including QEMU, while individual files have MIT terms; source and binary packaging are distinct.",
+      "sources": [
+        "https://raw.githubusercontent.com/revng/revng/352c75e3c568f188231d14a7e71e73164eef55ee/README.md",
+        "https://docs.rev.ng/"
+      ],
+      "source_commit": "352c75e3c568f188231d14a7e71e73164eef55ee",
+      "source_date": "2026-10-22T16:04:35Z",
+      "archived": false,
+      "license_api": "GPL-2.0",
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "bpftrace",
+      "url": "https://github.com/bpftrace/bpftrace",
+      "description": "Linux eBPF tracing language for observing kernel and user-space functions; available probes and permissions depend on the host kernel.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Linux eBPF tracing language for observing kernel and user-space functions",
+      "constraints": " available probes and permissions depend on the host kernel.",
+      "sources": [
+        "https://raw.githubusercontent.com/bpftrace/bpftrace/61f728e120c8f0b5af2cd94b8f370f3fea4eab76/README.md"
+      ],
+      "source_commit": "61f728e120c8f0b5af2cd94b8f370f3fea4eab76",
+      "source_date": "2026-10-25T01:15:33Z",
+      "archived": false,
+      "license_api": "Apache-2.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v0.27.1",
+        "published_at": "2026-10-24T21:05:13Z",
+        "url": "https://github.com/bpftrace/bpftrace/releases/tag/v0.27.1"
+      }
+    },
+    {
+      "name": "r2frida",
+      "url": "https://github.com/nowsecure/r2frida",
+      "description": "radare2 plugin for Frida-backed process inspection and instrumentation; requires a compatible radare2 build and a working Frida session with the target.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "radare2 plugin for Frida-backed process inspection and instrumentation",
+      "constraints": "README lists radare2, compiler/build utilities and Node/npm for source compilation. Host-side frida-tools is not itself a mandatory dependency.",
+      "sources": [
+        "https://raw.githubusercontent.com/nowsecure/r2frida/9c65e40b3b367859f0a51b0ad61ba9d0cdd8934f/README.md"
+      ],
+      "source_commit": "9c65e40b3b367859f0a51b0ad61ba9d0cdd8934f",
+      "source_date": "2026-10-17T10:08:18Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "6.2.4",
+        "published_at": "2026-10-09T12:40:18Z",
+        "url": "https://github.com/nowsecure/r2frida/releases/tag/6.2.4"
+      }
+    },
+    {
+      "name": "System Informer",
+      "url": "https://github.com/winsiderss/systeminformer",
+      "description": "Windows 10+ process and system inspector for handles, memory, services, and related kernel information; some views require elevated access.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Windows 10+ process and system inspector for handles, memory, services, and related kernel information",
+      "constraints": " some views require elevated access.",
+      "sources": [
+        "https://raw.githubusercontent.com/winsiderss/systeminformer/76bbd4bc7128433c9cbcce3219030954587e1f32/README.md"
+      ],
+      "source_commit": "76bbd4bc7128433c9cbcce3219030954587e1f32",
+      "source_date": "2026-10-25T06:53:32Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v4.0.26241.138",
+        "published_at": "2026-08-29T01:54:13Z",
+        "url": "https://github.com/winsiderss/systeminformer/releases/tag/v4.0.26241.138"
+      }
+    },
+    {
+      "name": "TinyTracer",
+      "url": "https://github.com/hasherezade/tiny_tracer",
+      "description": "Intel Pin tool for tracing execution and selected function or API calls; use the documented platform build and a matching Pin kit.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Intel Pin tool for tracing execution and selected function or API calls",
+      "constraints": "README links separate Windows and Linux build instructions. No assumption that every trace/API feature works identically on both.",
+      "sources": [
+        "https://raw.githubusercontent.com/hasherezade/tiny_tracer/99618fc0569a4a06b7955e507e1707792ad1bef5/README.md"
+      ],
+      "source_commit": "99618fc0569a4a06b7955e507e1707792ad1bef5",
+      "source_date": "2026-06-02T17:16:51Z",
+      "archived": false,
+      "license_api": "GPL-2.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "4.0",
+        "published_at": "2026-05-28T16:01:00Z",
+        "url": "https://github.com/hasherezade/tiny_tracer/releases/tag/4.0"
+      }
+    },
+    {
+      "name": "uftrace",
+      "url": "https://github.com/namhyung/uftrace",
+      "description": "Linux function-call tracer for C/C++, Rust, and Python, with call graphs and timing data; native-code coverage depends on instrumentation or supported dynamic tracing.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Linux function-call tracer for C/C++, Rust, and Python, with call graphs and timing data",
+      "constraints": " native-code coverage depends on instrumentation or supported dynamic tracing.",
+      "sources": [
+        "https://raw.githubusercontent.com/namhyung/uftrace/debef853bb42b5e4ca084c9efc5921cf06875cf4/README.md"
+      ],
+      "source_commit": "debef853bb42b5e4ca084c9efc5921cf06875cf4",
+      "source_date": "2026-10-25T06:41:14Z",
+      "archived": false,
+      "license_api": "GPL-2.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v0.20",
+        "published_at": "2026-08-30T01:19:27Z",
+        "url": "https://github.com/namhyung/uftrace/releases/tag/v0.20"
+      }
+    },
+    {
+      "name": "Al-Khaser",
+      "url": "https://github.com/ayoubfaouzi/al-khaser",
+      "description": "Windows proof-of-concept suite for exercising anti-debugging, anti-VM, anti-hooking, and other analysis-environment checks.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Windows proof-of-concept suite for exercising anti-debugging, anti-VM, anti-hooking, and other analysis-environment checks",
+      "constraints": "Windows proof-of-concept suite for exercising anti-debugging, anti-VM, anti-hooking, and other analysis-environment checks.",
+      "sources": [
+        "https://raw.githubusercontent.com/ayoubfaouzi/al-khaser/f0e5559073fe02c4f50cc8c3ed8d5b302a6a0659/README.md"
+      ],
+      "source_commit": "f0e5559073fe02c4f50cc8c3ed8d5b302a6a0659",
+      "source_date": "2026-07-01T08:04:12Z",
+      "archived": false,
+      "license_api": "GPL-2.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v1.1.0",
+        "published_at": "2026-01-27T10:36:06Z",
+        "url": "https://github.com/ayoubfaouzi/al-khaser/releases/tag/v1.1.0"
+      }
+    },
+    {
+      "name": "HollowsHunter",
+      "url": "https://github.com/hasherezade/hollows_hunter",
+      "description": "Windows process scanner using PE-sieve to find and dump injected or modified code across running processes; findings require manual investigation.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Windows process scanner using PE-sieve to find and dump injected or modified code across running processes",
+      "constraints": " findings require manual investigation.",
+      "sources": [
+        "https://raw.githubusercontent.com/hasherezade/hollows_hunter/831561cd0c63d0d9c257ad3bc963327bd828b491/README.md"
+      ],
+      "source_commit": "831561cd0c63d0d9c257ad3bc963327bd828b491",
+      "source_date": "2026-06-06T12:47:16Z",
+      "archived": false,
+      "license_api": "BSD-2-Clause",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v0.4.1.1",
+        "published_at": "2025-09-13T17:53:49Z",
+        "url": "https://github.com/hasherezade/hollows_hunter/releases/tag/v0.4.1.1"
+      }
+    },
+    {
+      "name": "Scylla",
+      "url": "https://github.com/NtQuery/Scylla",
+      "description": "Windows x86/x64 import-table reconstruction tool for dumped PE files; upstream documents older Windows versions, so current-host compatibility needs checking.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Windows x86/x64 import-table reconstruction tool for dumped PE files",
+      "constraints": "Source/default-branch snapshot is from 2019 and the published 0.9.8 release from 2015. This is a legacy tool, not evidence of validation on current Windows.",
+      "sources": [
+        "https://raw.githubusercontent.com/NtQuery/Scylla/e87fd578a3fa0e68b873dcc98951788f3a40e055/README.md"
+      ],
+      "source_commit": "e87fd578a3fa0e68b873dcc98951788f3a40e055",
+      "source_date": "2019-01-05T13:59:15Z",
+      "archived": false,
+      "license_api": "GPL-3.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v0.9.8",
+        "published_at": "2015-05-03T12:11:08Z",
+        "url": "https://github.com/NtQuery/Scylla/releases/tag/v0.9.8"
+      }
+    },
+    {
+      "name": "ScyllaHide",
+      "url": "https://github.com/x64dbg/ScyllaHide",
+      "description": "Windows x86/x64 user-mode anti-anti-debugging library with x64dbg, OllyDbg, and IDA integrations; debugger and plugin versions must match.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Windows x86/x64 user-mode anti-anti-debugging library with x64dbg, OllyDbg, and IDA integrations",
+      "constraints": "This is user-mode hiding, not a kernel anti-debug solution. Do not infer a GDB plugin from generic debugger language.",
+      "sources": [
+        "https://raw.githubusercontent.com/x64dbg/ScyllaHide/baa5c8e853ace2bee752631f27fdfe5b271d92f6/README.md"
+      ],
+      "source_commit": "baa5c8e853ace2bee752631f27fdfe5b271d92f6",
+      "source_date": "2023-07-29T23:07:02Z",
+      "archived": false,
+      "license_api": "GPL-3.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v1.4",
+        "published_at": "2023-03-24T13:58:17Z",
+        "url": "https://github.com/x64dbg/ScyllaHide/releases/tag/v1.4"
+      }
+    },
+    {
+      "name": "Didier Stevens Suite",
+      "url": "https://github.com/DidierStevens/DidierStevensSuite",
+      "description": "Python utilities for inspecting PDF, OLE, scripts, and other suspicious document inputs; dependencies and input support vary by script.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Python utilities for inspecting PDF, OLE, scripts, and other suspicious document inputs",
+      "constraints": "No root README was available. The reviewed oledump.py header declares public-domain source; dependencies, terms and behavior of every other script were not audited.",
+      "sources": [
+        "https://raw.githubusercontent.com/DidierStevens/DidierStevensSuite/7d625d0b05c4638b981a2a2cc9a8481d7b73e56d/oledump.py"
+      ],
+      "source_commit": "7d625d0b05c4638b981a2a2cc9a8481d7b73e56d",
+      "source_date": "2026-10-13T16:35:07Z",
+      "archived": false,
+      "license_api": null,
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "Dumpulator",
+      "url": "https://github.com/mrexodia/dumpulator",
+      "description": "Emulates selected user-mode code from Windows minidumps for tasks such as string decryption and unpacking; dump completeness and supported execution context limit what can run.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Emulates selected user-mode code from Windows minidumps for tasks such as string decryption and unpacking",
+      "constraints": "The implementation has explicit WOW64 handling; the earlier blanket x64-only review comment is not adopted. No real minidump was executed.",
+      "sources": [
+        "https://raw.githubusercontent.com/mrexodia/dumpulator/18a64d7ab6ccded24c5ffe72ba17ac03fd853f8b/README.md",
+        "https://raw.githubusercontent.com/mrexodia/dumpulator/18a64d7ab6ccded24c5ffe72ba17ac03fd853f8b/src/dumpulator/dumpulator.py"
+      ],
+      "source_commit": "18a64d7ab6ccded24c5ffe72ba17ac03fd853f8b",
+      "source_date": "2024-02-02T13:14:58Z",
+      "archived": false,
+      "license_api": "BSL-1.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v0.2.6",
+        "published_at": "2023-10-02T13:38:40Z",
+        "url": "https://github.com/mrexodia/dumpulator/releases/tag/v0.2.6"
+      }
+    },
+    {
+      "name": "FakeNet-NG",
+      "url": "https://github.com/mandiant/flare-fakenet-ng",
+      "description": "Intercepts traffic and emulates network services for dynamic analysis; supports Windows and selected Linux modes, with platform-specific setup and traffic-redirection privileges.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Intercepts traffic and emulates network services for dynamic analysis",
+      "constraints": " supports Windows and selected Linux modes, with platform-specific setup and traffic-redirection privileges.",
+      "sources": [
+        "https://raw.githubusercontent.com/mandiant/flare-fakenet-ng/7c8e006198b9df6e7b511140288fc5113c25d729/README.md"
+      ],
+      "source_commit": "7c8e006198b9df6e7b511140288fc5113c25d729",
+      "source_date": "2026-05-28T18:25:53Z",
+      "archived": false,
+      "license_api": "Apache-2.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v3.5",
+        "published_at": "2025-04-09T15:52:48Z",
+        "url": "https://github.com/mandiant/flare-fakenet-ng/releases/tag/v3.5"
+      }
+    },
+    {
+      "name": "CFR",
+      "url": "https://github.com/leibnitz27/cfr",
+      "description": "Java class and JAR decompiler for inspecting managed code; requires a Java runtime, and language-feature compatibility varies by input and release.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Java class and JAR decompiler for inspecting managed code",
+      "constraints": "README distinguishes running a released JAR from Maven/source-build prerequisites. No decompilation correctness is inferred solely from version support.",
+      "sources": [
+        "https://raw.githubusercontent.com/leibnitz27/cfr/c4145259dfcd8ad3e99004e4d9ecb0aed55dcc5a/README.md"
+      ],
+      "source_commit": "c4145259dfcd8ad3e99004e4d9ecb0aed55dcc5a",
+      "source_date": "2026-06-04T04:54:26Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "0.152",
+        "published_at": "2021-12-11T10:48:28Z",
+        "url": "https://github.com/leibnitz27/cfr/releases/tag/0.152"
+      }
+    },
+    {
+      "name": "Medusa",
+      "url": "https://github.com/Ch0pin/medusa",
+      "description": "Frida-based modular mobile runtime-analysis framework; documented hosts are Linux and macOS, with limited Windows functionality and target-side instrumentation prerequisites.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Frida-based modular mobile runtime-analysis framework",
+      "constraints": " documented hosts are Linux and macOS, with limited Windows functionality and target-side instrumentation prerequisites.",
+      "sources": [
+        "https://raw.githubusercontent.com/Ch0pin/medusa/a7bd929f297f0725a5e4d2e3952874a757d4e2fc/README.md"
+      ],
+      "source_commit": "a7bd929f297f0725a5e4d2e3952874a757d4e2fc",
+      "source_date": "2026-10-16T18:15:05Z",
+      "archived": false,
+      "license_api": "GPL-3.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v3.9.6",
+        "published_at": "2026-04-28T09:42:55Z",
+        "url": "https://github.com/Ch0pin/medusa/releases/tag/v3.9.6"
+      }
+    },
+    {
+      "name": "LLDB scripts by Derek Selander",
+      "url": "https://github.com/DerekSelander/LLDB",
+      "description": "LLDB commands, aliases, and Python helpers for Apple-platform investigations; individual scripts have architecture and debugger-version limits.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "LLDB commands, aliases, and Python helpers for Apple-platform investigations",
+      "constraints": "For example, the enhanced disassembly command is documented as terminal/x86-64-specific. Loading the entire collection is not evidence every command supports ARM64.",
+      "sources": [
+        "https://raw.githubusercontent.com/DerekSelander/LLDB/1f6c9cf603b2c1c68bcc9de996b7478b3a3ec60e/README.md"
+      ],
+      "source_commit": "1f6c9cf603b2c1c68bcc9de996b7478b3a3ec60e",
+      "source_date": "2025-07-23T18:13:00Z",
+      "archived": false,
+      "license_api": "GPL-2.0",
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "Heimdall",
+      "url": "https://github.com/Jon-Becker/heimdall-rs",
+      "description": "EVM bytecode-analysis toolkit for disassembly, decompilation, and contract inspection; inferred source, types, and signatures require validation.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "EVM bytecode-analysis toolkit for disassembly, decompilation, and contract inspection",
+      "constraints": " inferred source, types, and signatures require validation.",
+      "sources": [
+        "https://raw.githubusercontent.com/Jon-Becker/heimdall-rs/89e107f033f6e8fc037ba58757ac855e2a7049dd/README.md"
+      ],
+      "source_commit": "89e107f033f6e8fc037ba58757ac855e2a7049dd",
+      "source_date": "2026-10-23T15:35:36Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "0.9.3",
+        "published_at": "2026-04-30T01:18:58Z",
+        "url": "https://github.com/Jon-Becker/heimdall-rs/releases/tag/0.9.3"
+      }
+    },
+    {
+      "name": "r2flutter",
+      "url": "https://github.com/radareorg/r2flutter",
+      "description": "radare2 plugin and CLI for recovering Dart AOT snapshot metadata from Flutter binaries; requires radare2 6.2.2+, primarily targets AArch64, and depends on snapshot layout.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "radare2 plugin and CLI for recovering Dart AOT snapshot metadata from Flutter binaries",
+      "constraints": "The support document distinguishes source layout profiles and structural guesses from actual regression coverage. It describes Android and iOS containers; do not restrict it to Android solely on an older review comment.",
+      "sources": [
+        "https://raw.githubusercontent.com/radareorg/r2flutter/441d614937c8ada56e4d0c1175050667842c0971/README.md",
+        "https://raw.githubusercontent.com/radareorg/r2flutter/441d614937c8ada56e4d0c1175050667842c0971/doc/support.md"
+      ],
+      "source_commit": "441d614937c8ada56e4d0c1175050667842c0971",
+      "source_date": "2026-10-21T10:47:42Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "0.5.1",
+        "published_at": "2026-10-16T01:30:00Z",
+        "url": "https://github.com/radareorg/r2flutter/releases/tag/0.5.1"
+      }
+    },
+    {
+      "name": "Redress",
+      "url": "https://github.com/goretk/redress",
+      "description": "Recovers compiler metadata, packages, types, and symbols from stripped Go executables; target Go-version compatibility depends on the selected release and GoRE parser.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Recovers compiler metadata, packages, types, and symbols from stripped Go executables",
+      "constraints": "The default branch and latest release are different evidence channels. Latest release v1.2.98 was published 2026-10-20; no unsupported mothballed classification is used.",
+      "sources": [
+        "https://raw.githubusercontent.com/goretk/redress/198e6dc82f17ca6e9edb80b22a85af17f1a3b031/README.md"
+      ],
+      "source_commit": "198e6dc82f17ca6e9edb80b22a85af17f1a3b031",
+      "source_date": "2026-10-20T12:49:22Z",
+      "archived": false,
+      "license_api": "AGPL-3.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v1.2.98",
+        "published_at": "2026-10-20T12:50:16Z",
+        "url": "https://github.com/goretk/redress/releases/tag/v1.2.98"
+      },
+      "default_branch_source_commit": "fe38d961b5d8bf0a0ebf58421527da64422a7922",
+      "default_branch_source_date": "2024-10-12T20:52:29Z",
+      "source_channel": "release v1.2.98"
+    },
+    {
+      "name": "reFlutter",
+      "url": "https://github.com/Impact-I/reFlutter",
+      "description": "Flutter mobile-analysis framework that instruments matching engine builds and produces method or type information; Android/iOS architecture and engine-version support varies.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Flutter mobile-analysis framework that instruments matching engine builds and produces method or type information",
+      "constraints": "The current source documents Android arm64/arm32/x64 and iOS arm64 with engine/version constraints. That is documentation, not execution of each target.",
+      "sources": [
+        "https://raw.githubusercontent.com/Impact-I/reFlutter/590b1d2f12a274a249fb84a7fc4e2236fbe4639d/README.md"
+      ],
+      "source_commit": "590b1d2f12a274a249fb84a7fc4e2236fbe4639d",
+      "source_date": "2026-10-24T13:07:12Z",
+      "archived": false,
+      "license_api": "GPL-3.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "android-v3-0451907c2eaa8467e848c0067bfe8ed4",
+        "published_at": "2026-09-22T23:23:52Z",
+        "url": "https://github.com/Impact-I/reFlutter/releases/tag/android-v3-0451907c2eaa8467e848c0067bfe8ed4"
+      }
+    },
+    {
+      "name": "WhatsABI",
+      "url": "https://github.com/shazow/whatsabi",
+      "description": "TypeScript library for inferring Ethereum ABI entries and resolving proxy metadata from bytecode; inferred signatures and types are not original-source recovery.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "TypeScript library for inferring Ethereum ABI entries and resolving proxy metadata from bytecode",
+      "constraints": " inferred signatures and types are not original-source recovery.",
+      "sources": [
+        "https://raw.githubusercontent.com/shazow/whatsabi/eefa62383640b9056aade49d1d5ed2206ffcdb3b/README.md"
+      ],
+      "source_commit": "eefa62383640b9056aade49d1d5ed2206ffcdb3b",
+      "source_date": "2026-10-19T14:02:52Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v0.30.0",
+        "published_at": "2026-10-19T14:05:54Z",
+        "url": "https://github.com/shazow/whatsabi/releases/tag/v0.30.0"
+      }
+    },
+    {
+      "name": "Netzob",
+      "url": "https://github.com/netzob/netzob",
+      "description": "Python protocol-inference library for exploring fields, messages, and state models from captures; installation needs native dependencies and the documented Python environment.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Python protocol-inference library for exploring fields, messages, and state models from captures",
+      "constraints": "README documents Python 3.8+ plus native libpcap/libffi/build dependencies. Old packaged examples are not proof of compatibility with every newer Python.",
+      "sources": [
+        "https://raw.githubusercontent.com/netzob/netzob/088fe769e98e0bfbd3ed99e66b3982446bf8d197/README.rst"
+      ],
+      "source_commit": "088fe769e98e0bfbd3ed99e66b3982446bf8d197",
+      "source_date": "2023-01-08T20:32:33Z",
+      "archived": false,
+      "license_api": "GPL-3.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "Release/netzob-2.0.0",
+        "published_at": "2023-01-08T17:09:43Z",
+        "url": "https://github.com/netzob/netzob/releases/tag/Release/netzob-2.0.0"
+      }
+    },
+    {
+      "name": "avatar2",
+      "url": "https://github.com/avatartwo/avatar2",
+      "description": "Coordinates debuggers, emulators, and physical targets for embedded analysis; each endpoint needs its own compatible backend and any associated hardware.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Coordinates debuggers, emulators, and physical targets for embedded analysis",
+      "constraints": " each endpoint needs its own compatible backend and any associated hardware.",
+      "sources": [
+        "https://raw.githubusercontent.com/avatartwo/avatar2/56a90cfe738886236dcbc3653756bdbdec6aaf92/README.md"
+      ],
+      "source_commit": "56a90cfe738886236dcbc3653756bdbdec6aaf92",
+      "source_date": "2024-10-23T14:13:00Z",
+      "archived": false,
+      "license_api": "Apache-2.0",
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "ChipWhisperer",
+      "url": "https://github.com/newaetech/chipwhisperer",
+      "description": "Hardware and Python tooling for side-channel power analysis and fault-injection experiments; live capture and glitching require compatible capture and target hardware.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Hardware and Python tooling for side-channel power analysis and fault-injection experiments",
+      "constraints": "Capture board, target board, firmware and trace-analysis software are separate components; software/source availability does not supply hardware.",
+      "sources": [
+        "https://raw.githubusercontent.com/newaetech/chipwhisperer/febd64ea455fcc69c869f68d834a4b53ead7f022/README.md"
+      ],
+      "source_commit": "febd64ea455fcc69c869f68d834a4b53ead7f022",
+      "source_date": "2026-10-23T17:38:55Z",
+      "archived": false,
+      "license_api": "NOASSERTION",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "sca101_release",
+        "published_at": "2026-08-31T10:56:09Z",
+        "url": "https://github.com/newaetech/chipwhisperer/releases/tag/sca101_release"
+      }
+    },
+    {
+      "name": "esptool",
+      "url": "https://github.com/espressif/esptool",
+      "description": "Serial bootloader utility for inspecting and reading or flashing Espressif devices; current source requires Python 3.10+ and a compatible device connection.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Serial bootloader utility for inspecting and reading or flashing Espressif devices",
+      "constraints": " current source requires Python 3.10+ and a compatible device connection.",
+      "sources": [
+        "https://raw.githubusercontent.com/espressif/esptool/93477aceb5bc28971db26223a60339bb53e9390a/README.md",
+        "https://raw.githubusercontent.com/espressif/esptool/93477aceb5bc28971db26223a60339bb53e9390a/pyproject.toml"
+      ],
+      "source_commit": "93477aceb5bc28971db26223a60339bb53e9390a",
+      "source_date": "2026-10-20T14:01:25Z",
+      "archived": false,
+      "license_api": "GPL-2.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v5.6.0",
+        "published_at": "2026-10-15T15:06:04Z",
+        "url": "https://github.com/espressif/esptool/releases/tag/v5.6.0"
+      }
+    },
+    {
+      "name": "FACT",
+      "url": "https://github.com/fkie-cad/FACT_core",
+      "description": "Linux firmware extraction, analysis, and comparison platform; the native installer has specific distribution and Python requirements, while the separate Docker route is unmaintained.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Linux firmware extraction, analysis, and comparison platform",
+      "constraints": "Reviewed installer lists Debian 13 and Ubuntu 22.04/24.04/26.04; Python 3.10–3.14, at least four cores/eight GB RAM and additional result storage. The separate Docker image is explicitly unmaintained.",
+      "sources": [
+        "https://raw.githubusercontent.com/fkie-cad/FACT_core/dc594e8f2ed120b1e04aaf3c52dda201be967dff/README.md"
+      ],
+      "source_commit": "dc594e8f2ed120b1e04aaf3c52dda201be967dff",
+      "source_date": "2026-10-15T09:37:09Z",
+      "archived": false,
+      "license_api": "GPL-3.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v4.4.1",
+        "published_at": "2026-09-14T15:03:03Z",
+        "url": "https://github.com/fkie-cad/FACT_core/releases/tag/v4.4.1"
+      }
+    },
+    {
+      "name": "HALucinator",
+      "url": "https://github.com/halucinator/halucinator",
+      "description": "Firmware-rehosting framework that replaces selected hardware-abstraction-layer calls with models; requires its emulation toolchain and target-specific handlers or configuration.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Firmware-rehosting framework that replaces selected hardware-abstraction-layer calls with models",
+      "constraints": "Review covers the documented rehosting approach and setup only, not ready-to-run emulation of arbitrary firmware or physical peripherals.",
+      "sources": [
+        "https://raw.githubusercontent.com/halucinator/halucinator/9bde2c0c55589a0e36fd607a21b7ffd07ecca7a0/README.md"
+      ],
+      "source_commit": "9bde2c0c55589a0e36fd607a21b7ffd07ecca7a0",
+      "source_date": "2026-08-19T12:15:34Z",
+      "archived": false,
+      "license_api": "NOASSERTION",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v1.9.0",
+        "published_at": "2026-08-04T17:33:14Z",
+        "url": "https://github.com/halucinator/halucinator/releases/tag/v1.9.0"
+      }
+    },
+    {
+      "name": "Proxmark3",
+      "url": "https://github.com/RfidResearchGroup/proxmark3",
+      "description": "RFID and NFC research client and firmware for compatible Proxmark3 hardware; client, firmware, and device variants need to match.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "RFID and NFC research client and firmware for compatible Proxmark3 hardware",
+      "constraints": " client, firmware, and device variants need to match.",
+      "sources": [
+        "https://raw.githubusercontent.com/RfidResearchGroup/proxmark3/fabf0f7b947628b9540a93f71c48c8ae4cd270c4/README.md"
+      ],
+      "source_commit": "fabf0f7b947628b9540a93f71c48c8ae4cd270c4",
+      "source_date": "2026-10-24T16:57:42Z",
+      "archived": false,
+      "license_api": "GPL-3.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v4.23346",
+        "published_at": "2026-09-17T22:28:27Z",
+        "url": "https://github.com/RfidResearchGroup/proxmark3/releases/tag/v4.23346"
+      }
+    },
+    {
+      "name": "ripcord",
+      "url": "https://github.com/DavidClawson/ripcord",
+      "description": "Ghidra-based firmware-analysis pipeline producing queryable Parquet tables for DuckDB; requires Ghidra 11.2+ with PyGhidra and Python 3.11+, with optional simulation tooling.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Ghidra-based firmware-analysis pipeline producing queryable Parquet tables for DuckDB",
+      "constraints": "Ghidra/PyGhidra, Python, uv, Snakemake and DuckDB setup are documented; Renode/cross-toolchains are optional for simulation/test-corpus paths.",
+      "sources": [
+        "https://raw.githubusercontent.com/DavidClawson/ripcord/fc063d28309cc4732976b037768caf7dc37066fc/README.md",
+        "https://raw.githubusercontent.com/DavidClawson/ripcord/fc063d28309cc4732976b037768caf7dc37066fc/SETUP.md"
+      ],
+      "source_commit": "fc063d28309cc4732976b037768caf7dc37066fc",
+      "source_date": "2026-05-30T14:59:35Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "Hex Fiend",
+      "url": "https://github.com/HexFiend/HexFiend",
+      "description": "macOS hex editor for inspecting and editing large binary files, with binary templates and an embeddable framework.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "macOS hex editor for inspecting and editing large binary files, with binary templates and an embeddable framework",
+      "constraints": "macOS hex editor for inspecting and editing large binary files, with binary templates and an embeddable framework.",
+      "sources": [
+        "https://raw.githubusercontent.com/HexFiend/HexFiend/32cb2ef78d2ff3bc6ecf326a6b19eeebb2945c13/README.md"
+      ],
+      "source_commit": "32cb2ef78d2ff3bc6ecf326a6b19eeebb2945c13",
+      "source_date": "2025-06-29T18:26:29Z",
+      "archived": false,
+      "license_api": "BSD-2-Clause",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v2.18.1",
+        "published_at": "2025-03-16T12:57:36Z",
+        "url": "https://github.com/HexFiend/HexFiend/releases/tag/v2.18.1"
+      }
+    },
+    {
+      "name": "FModel",
+      "url": "https://github.com/4sval/FModel",
+      "description": "Windows x64 GUI for inspecting and extracting Unreal Engine game archives and assets; title-specific mappings, versions, or encryption keys may be needed.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Windows x64 GUI for inspecting and extracting Unreal Engine game archives and assets",
+      "constraints": "The reviewed project file targets net10.0-windows, uses WPF and win-x64. That source-build requirement is separate from published release packaging.",
+      "sources": [
+        "https://raw.githubusercontent.com/4sval/FModel/05cfbdd1648afe2928109b70ab63880a4bc8f7b4/README.md",
+        "https://raw.githubusercontent.com/4sval/FModel/05cfbdd1648afe2928109b70ab63880a4bc8f7b4/FModel/FModel.csproj"
+      ],
+      "source_commit": "05cfbdd1648afe2928109b70ab63880a4bc8f7b4",
+      "source_date": "2026-10-15T17:41:38Z",
+      "archived": false,
+      "license_api": "GPL-3.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "aug-2026",
+        "published_at": "2026-08-02T16:03:54Z",
+        "url": "https://github.com/4sval/FModel/releases/tag/aug-2026"
+      }
+    },
+    {
+      "name": "ReClass.NET",
+      "url": "https://github.com/ReClassNET/ReClass.NET",
+      "description": "Interactive process-memory structure editor for Windows and Linux; upstream documents Linux support tested on Ubuntu 18.04, rather than current-distribution validation.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Interactive process-memory structure editor for Windows and Linux",
+      "constraints": "Linux/Mono support is explicit in upstream documentation; the historical Ubuntu 18.04 evidence must not become either a Windows-only claim or a current Linux guarantee.",
+      "sources": [
+        "https://raw.githubusercontent.com/ReClassNET/ReClass.NET/a02fcb9bd669c8f81facd3ee9ad57cdcbf2cc0e1/README.md"
+      ],
+      "source_commit": "a02fcb9bd669c8f81facd3ee9ad57cdcbf2cc0e1",
+      "source_date": "2023-07-03T19:23:20Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v1.2",
+        "published_at": "2019-04-15T20:43:42Z",
+        "url": "https://github.com/ReClassNET/ReClass.NET/releases/tag/v1.2"
+      }
+    },
+    {
+      "name": "Source 2 Viewer",
+      "url": "https://github.com/ValveResourceFormat/ValveResourceFormat",
+      "description": "Parser, decompiler, exporter, and Windows viewer for Valve Source 2 resources and VPK archives; format coverage and export fidelity vary by resource type.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Parser, decompiler, exporter, and Windows viewer for Valve Source 2 resources and VPK archives",
+      "constraints": "The official current download site lists Windows 11 and OpenGL 4.6 for the viewer. Source README says some formats are incomplete and export may lose data.",
+      "sources": [
+        "https://raw.githubusercontent.com/ValveResourceFormat/ValveResourceFormat/c831b4a37edf39c3614fabde796becd14e065732/README.md",
+        "https://s2v.app/"
+      ],
+      "source_commit": "c831b4a37edf39c3614fabde796becd14e065732",
+      "source_date": "2026-10-25T08:56:15Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "20.1",
+        "published_at": "2026-10-15T07:55:06Z",
+        "url": "https://github.com/ValveResourceFormat/ValveResourceFormat/releases/tag/20.1"
+      }
+    },
+    {
+      "name": "UModel",
+      "url": "https://www.gildor.org/en/projects/umodel",
+      "description": "Unreal Engine package viewer and asset exporter for Windows and Linux; game/version compatibility varies, and the official site leaves licensing undetermined.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Unreal Engine package viewer and asset exporter for Windows and Linux",
+      "constraints": "Official page lists Windows/Linux and notes no Linux GUI. Its displayed update/release dates and licensing note are historical, so they are recorded rather than treated as new compatibility tests.",
+      "sources": [
+        "https://www.gildor.org/en/projects/umodel"
+      ],
+      "source_commit": null,
+      "source_date": null,
+      "archived": null,
+      "license_api": null,
+      "license_api_is_complete_audit": false
+    },
+    {
+      "name": "vgmstream",
+      "url": "https://github.com/vgmstream/vgmstream",
+      "description": "Library and command-line tools for decoding proprietary game-audio streams; supported formats, codec dependencies, and player integrations vary.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Library and command-line tools for decoding proprietary game-audio streams",
+      "constraints": "API license metadata is incomplete; upstream component/codec licensing applies. No decoder or codec matrix was executed.",
+      "sources": [
+        "https://raw.githubusercontent.com/vgmstream/vgmstream/f4ac1437d461027d1c48466c2404e4cfffb85405/README.md"
+      ],
+      "source_commit": "f4ac1437d461027d1c48466c2404e4cfffb85405",
+      "source_date": "2026-10-24T11:46:57Z",
+      "archived": false,
+      "license_api": "NOASSERTION",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "r2117",
+        "published_at": "2026-05-19T22:37:30Z",
+        "url": "https://github.com/vgmstream/vgmstream/releases/tag/r2117"
+      }
+    },
+    {
+      "name": "Binlex",
+      "url": "https://github.com/c3rb3ru5d3d53c/binlex",
+      "description": "Binary-feature analysis framework with CLI and language bindings for similarity and corpus investigation; build and plugin dependencies vary by interface.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Binary-feature analysis framework with CLI and language bindings for similarity and corpus investigation",
+      "constraints": " build and plugin dependencies vary by interface.",
+      "sources": [
+        "https://raw.githubusercontent.com/c3rb3ru5d3d53c/binlex/f02f270c378b652dcfaca8a88f7d65bd4a95347b/README.md"
+      ],
+      "source_commit": "f02f270c378b652dcfaca8a88f7d65bd4a95347b",
+      "source_date": "2026-05-18T14:46:35Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v1.1.1",
+        "published_at": "2023-03-04T02:52:14Z",
+        "url": "https://github.com/c3rb3ru5d3d53c/binlex/releases/tag/v1.1.1"
+      }
+    },
+    {
+      "name": "BINSEC",
+      "url": "https://github.com/binsec/binsec",
+      "description": "Binary-analysis platform combining symbolic execution, abstract interpretation, and SMT solving; source builds require OCaml and compatible solver/backend dependencies.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Binary-analysis platform combining symbolic execution, abstract interpretation, and SMT solving",
+      "constraints": " source builds require OCaml and compatible solver/backend dependencies.",
+      "sources": [
+        "https://raw.githubusercontent.com/binsec/binsec/9749bd8aed7ee0a27959158b1e53e8789cb0e5ab/README.md",
+        "https://raw.githubusercontent.com/binsec/binsec/9749bd8aed7ee0a27959158b1e53e8789cb0e5ab/INSTALL.md"
+      ],
+      "source_commit": "9749bd8aed7ee0a27959158b1e53e8789cb0e5ab",
+      "source_date": "2026-08-26T14:34:30Z",
+      "archived": false,
+      "license_api": "LGPL-2.1",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "0.11.3",
+        "published_at": "2026-08-26T14:52:45Z",
+        "url": "https://github.com/binsec/binsec/releases/tag/0.11.3"
+      }
+    },
+    {
+      "name": "flare-emu",
+      "url": "https://github.com/mandiant/flare-emu",
+      "description": "Archived Unicorn-based emulation helper for IDA Pro, Rizin, and radare2 scripting; analysis-host APIs and Python bindings must match the archived source.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Archived Unicorn-based emulation helper for IDA Pro, Rizin, and radare2 scripting",
+      "constraints": "Repository archived state is true. README documents IDA, Rizin and radare2 integrations, not Ghidra.",
+      "sources": [
+        "https://raw.githubusercontent.com/mandiant/flare-emu/6688c3270d9847c1b96ffcae00f58c0c85ab1a7e/README.md"
+      ],
+      "source_commit": "6688c3270d9847c1b96ffcae00f58c0c85ab1a7e",
+      "source_date": "2025-08-05T14:18:17Z",
+      "archived": true,
+      "license_api": "Apache-2.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "2025-08-14",
+        "published_at": "2025-08-14T21:21:02Z",
+        "url": "https://github.com/mandiant/flare-emu/releases/tag/2025-08-14"
+      }
+    },
+    {
+      "name": "KLEE",
+      "url": "https://github.com/klee/klee",
+      "description": "LLVM-bitcode symbolic-execution engine for generating test inputs and finding assertion violations; requires a compatible compiler/runtime setup and does not imply proof from an incomplete run.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "LLVM-bitcode symbolic-execution engine for generating test inputs and finding assertion violations",
+      "constraints": "Finding no failing assertion during a bounded symbolic-execution run is not a proof over every feasible path.",
+      "sources": [
+        "https://raw.githubusercontent.com/klee/klee/03d8b93d3f9dbd2829bec596a4f39100ddf9b884/README.md"
+      ],
+      "source_commit": "03d8b93d3f9dbd2829bec596a4f39100ddf9b884",
+      "source_date": "2026-10-15T15:32:23Z",
+      "archived": false,
+      "license_api": "NOASSERTION",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v3.3",
+        "published_at": "2026-10-15T15:14:13Z",
+        "url": "https://github.com/klee/klee/releases/tag/v3.3"
+      }
+    },
+    {
+      "name": "PANDA",
+      "url": "https://github.com/panda-re/panda",
+      "description": "QEMU-based whole-system record/replay and analysis framework with taint-analysis plugins; analysis depends on supported guest architectures, recordings, and matching plugins.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "QEMU-based whole-system record/replay and analysis framework with taint-analysis plugins",
+      "constraints": " analysis depends on supported guest architectures, recordings, and matching plugins.",
+      "sources": [
+        "https://raw.githubusercontent.com/panda-re/panda/36502113107ff260e7499065c9d4b764d387a7da/README.md"
+      ],
+      "source_commit": "36502113107ff260e7499065c9d4b764d387a7da",
+      "source_date": "2026-06-09T00:49:59Z",
+      "archived": false,
+      "license_api": "NOASSERTION",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v1.8.85",
+        "published_at": "2026-06-09T01:17:47Z",
+        "url": "https://github.com/panda-re/panda/releases/tag/v1.8.85"
+      }
+    },
+    {
+      "name": "S2E",
+      "url": "https://github.com/S2E/s2e",
+      "description": "Selective symbolic-execution platform for analyzing programs across OS boundaries; requires a supported Linux host, the S2E toolchain, and prepared guest images.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Selective symbolic-execution platform for analyzing programs across OS boundaries",
+      "constraints": "Official s2e-env guide documents supported 64-bit Debian/Ubuntu hosts, substantial builds and guest-image preparation; no VM stack was built for this review.",
+      "sources": [
+        "https://raw.githubusercontent.com/S2E/s2e/d28f91b68412a021d999e218aad4abebd0b97311/README.md",
+        "https://s2e.systems/docs/s2e-env.html"
+      ],
+      "source_commit": "d28f91b68412a021d999e218aad4abebd0b97311",
+      "source_date": "2026-10-23T21:19:35Z",
+      "archived": false,
+      "license_api": "NOASSERTION",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v2.0.0",
+        "published_at": "2020-01-18T16:38:51Z",
+        "url": "https://github.com/S2E/s2e/releases/tag/v2.0.0"
+      }
+    },
+    {
+      "name": "Z3",
+      "url": "https://github.com/Z3Prover/z3",
+      "description": "SMT solver with command-line and language APIs for expressing and solving analysis constraints; satisfiability results depend on the model and solver outcome, including possible unknown results.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "SMT solver with command-line and language APIs for expressing and solving analysis constraints",
+      "constraints": " satisfiability results depend on the model and solver outcome, including possible unknown results.",
+      "sources": [
+        "https://raw.githubusercontent.com/Z3Prover/z3/1d790df0867ec01e38e755c55f5d5b0904ae2f18/README.md"
+      ],
+      "source_commit": "1d790df0867ec01e38e755c55f5d5b0904ae2f18",
+      "source_date": "2026-10-25T09:45:10Z",
+      "archived": false,
+      "license_api": "NOASSERTION",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "z3-5.3.1",
+        "published_at": "2026-10-15T21:31:37Z",
+        "url": "https://github.com/Z3Prover/z3/releases/tag/z3-5.3.1"
+      }
+    },
+    {
+      "name": "BAP",
+      "url": "https://github.com/BinaryAnalysisPlatform/bap",
+      "description": "Binary-analysis platform for lifting native code into an intermediate language and running analyses; source installation uses OCaml/opam and a compatible LLVM toolchain.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Binary-analysis platform for lifting native code into an intermediate language and running analyses",
+      "constraints": " source installation uses OCaml/opam and a compatible LLVM toolchain.",
+      "sources": [
+        "https://raw.githubusercontent.com/BinaryAnalysisPlatform/bap/034bbd09646a589d5eb1f10b740177d628da80fd/README.md"
+      ],
+      "source_commit": "034bbd09646a589d5eb1f10b740177d628da80fd",
+      "source_date": "2026-05-07T15:28:41Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v2.5.0",
+        "published_at": "2022-07-11T20:58:13Z",
+        "url": "https://github.com/BinaryAnalysisPlatform/bap/releases/tag/v2.5.0"
+      }
+    },
+    {
+      "name": "Remill",
+      "url": "https://github.com/lifting-bits/remill",
+      "description": "Library for lifting supported machine instructions into LLVM bitcode; requires compatible LLVM and build dependencies, with Windows support documented as experimental.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "Library for lifting supported machine instructions into LLVM bitcode",
+      "constraints": "README documents LLVM 15+, CMake 3.21+, Linux/macOS and experimental Windows; lifting instructions is not equivalent to recovering a whole program.",
+      "sources": [
+        "https://raw.githubusercontent.com/lifting-bits/remill/56918a8c2554088e93389e97d292f4035286506c/README.md"
+      ],
+      "source_commit": "56918a8c2554088e93389e97d292f4035286506c",
+      "source_date": "2026-08-27T18:13:36Z",
+      "archived": false,
+      "license_api": "Apache-2.0",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v6.0.1",
+        "published_at": "2026-04-21T13:24:50Z",
+        "url": "https://github.com/lifting-bits/remill/releases/tag/v6.0.1"
+      }
+    },
+    {
+      "name": "Zydis",
+      "url": "https://github.com/zyantific/zydis",
+      "description": "x86/x86-64 instruction decoding and encoding library for building analysis tools; source builds use CMake or the documented Visual Studio project.",
+      "checked_at": "2026-10-25",
+      "next_review": "2026-11-25",
+      "evidence_type": "documented",
+      "execution_verified": false,
+      "task_and_output": "x86/x86-64 instruction decoding and encoding library for building analysis tools",
+      "constraints": " source builds use CMake or the documented Visual Studio project.",
+      "sources": [
+        "https://raw.githubusercontent.com/zyantific/zydis/a95bb71013436547f689fc0b380f48edf663066e/README.md"
+      ],
+      "source_commit": "a95bb71013436547f689fc0b380f48edf663066e",
+      "source_date": "2026-07-27T13:04:13Z",
+      "archived": false,
+      "license_api": "MIT",
+      "license_api_is_complete_audit": false,
+      "latest_release": {
+        "tag": "v4.1.1",
+        "published_at": "2025-02-16T00:17:45Z",
+        "url": "https://github.com/zyantific/zydis/releases/tag/v4.1.1"
+      }
+    }
+  ]
+}
