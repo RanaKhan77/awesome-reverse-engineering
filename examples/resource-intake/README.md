@@ -66,7 +66,7 @@ The boofuzz check also records three limits:
 
 The Keystone check also records two limits:
 
-- Relative branches and RIP-relative operands are encoded against the address passed to `asm()`, so the same text gives different bytes at another base.
+- A branch to an absolute target is encoded as an offset from the address passed to `asm()`, so the same text gives different bytes at another base.
 - An unknown mnemonic fails with `KS_ERR_ASM_MNEMONICFAIL`, but an ARM64 immediate that one `MOV` cannot encode (`mov x0, #0x12345678`) fails with errno 561, which the 0.9.2 Python binding has no constant for and reports only as "Unknown error".
 
 Without `-dtb`, MemProcFS rejects a raw image that contains no identifiable operating system (`Unable to locate valid DTB`). The Linux `memprocfs` wheel does not include `leechcore.so`; the runner uses the one from `leechcorepyc` by starting the probe with `LD_LIBRARY_PATH` pointing at its directory.
