@@ -21,9 +21,9 @@ spec.loader.exec_module(verifier)
 
 
 # Independent of the verifier: (sys_platform, platform_machine) -> packages pip should install beyond the
-# always-required pins. MemProcFS is exercised only on Linux x86-64.
+# always-required pins. MemProcFS and Keystone are exercised only on Linux x86-64.
 HOST_MATRIX = {
-    ("linux", "x86_64"): {"memprocfs", "leechcorepyc"},
+    ("linux", "x86_64"): {"memprocfs", "leechcorepyc", "keystone-engine", "capstone"},
     ("linux", "aarch64"): set(),
     ("darwin", "arm64"): set(),
     ("darwin", "x86_64"): set(),

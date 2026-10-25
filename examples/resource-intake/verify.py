@@ -1,4 +1,4 @@
-"""Reproduce eight narrow resource examples with independent expected outputs."""
+"""Reproduce nine narrow resource examples with independent expected outputs."""
 import argparse
 import ctypes.util
 from datetime import datetime, timezone
@@ -44,6 +44,15 @@ TRC1_CASES = 575
 MEMPROCFS_PACKAGES = {"memprocfs": "5.19.0", "leechcorepyc": "2.23.3"}
 PML4, PDPT, PD, PT, PAGE = 0x10000, 0x11000, 0x12000, 0x13000, 0x345000
 FIXTURE_VA = 0x140001678
+KEYSTONE_PACKAGES = {"keystone-engine": "0.9.2", "capstone": "5.0.9"}
+ASM_BASE = 0x1000
+# Expected bytes are encoded by hand from the Intel SDM and Arm ARM opcode tables, not by either library.
+X64_SOURCE = "push rbp; mov rbp, rsp; mov eax, dword ptr [rbx + rcx*4 + 8]; xor eax, eax; pop rbp; ret"
+X64_BYTES = "554889e58b448b0831c05dc3"
+A64_SOURCE = "mov x0, #1; add x1, x2, x3; ldr x0, [x1, #8]; b #0x1010; ret"
+A64_BYTES = "200080d24100038b200440f901000014c0035fd6"
+# The same `b #0x1010` assembled at 0x2000 is a backward branch: imm26 = (0x1010 - 0x2000) / 4.
+A64_BACKWARD_BRANCH = "04fcff17"
 
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -284,10 +293,17 @@ def memprocfs_host():
     return platform.system() == "Linux" and platform.machine() == "x86_64"
 
 
+def keystone_host():
+    # Keystone 0.9.2 has no ARM-host wheels (pip would build it from source); only Linux x86-64 is exercised here.
+    return platform.system() == "Linux" and platform.machine() == "x86_64"
+
+
 def required_packages():
     packages = {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1", "boofuzz": "0.4.2"}
     if memprocfs_host():
         packages.update(MEMPROCFS_PACKAGES)
+    if keystone_host():
+        packages.update(KEYSTONE_PACKAGES)
     return packages
 
 
@@ -323,6 +339,40 @@ def verify_memprocfs(work):
     assert bytes.fromhex(observed["virtual"]) == b"MPFS-VIRT-MARK-2" and observed["virt2phys"] == PAGE + 0x678
     assert "memory.pmem" in observed["root"]
     return sha256(image)
+
+
+def verify_keystone():
+    import capstone
+    import keystone
+
+    cases = [
+        (keystone.KS_ARCH_X86, keystone.KS_MODE_64, capstone.CS_ARCH_X86, capstone.CS_MODE_64, X64_SOURCE, X64_BYTES),
+        (keystone.KS_ARCH_ARM64, keystone.KS_MODE_LITTLE_ENDIAN, capstone.CS_ARCH_ARM64, capstone.CS_MODE_ARM, A64_SOURCE, A64_BYTES),
+    ]
+    for ks_arch, ks_mode, cs_arch, cs_mode, source, expected in cases:
+        assembler = keystone.Ks(ks_arch, ks_mode)
+        encoding, count = assembler.asm(source, ASM_BASE)
+        assert bytes(encoding).hex() == expected and count == source.count(";") + 1, (source, bytes(encoding).hex(), count)
+        text = "; ".join(f"{insn.mnemonic} {insn.op_str}".strip() for insn in capstone.Cs(cs_arch, cs_mode).disasm(bytes.fromhex(expected), ASM_BASE))
+        assert text == source, text
+        assert bytes(assembler.asm(text, ASM_BASE)[0]).hex() == expected
+
+    arm64 = keystone.Ks(keystone.KS_ARCH_ARM64, keystone.KS_MODE_LITTLE_ENDIAN)
+    # Relative branches are encoded against the address passed to asm().
+    assert bytes(arm64.asm("b #0x1010", 0x2000)[0]).hex() == A64_BACKWARD_BRANCH
+    try:
+        keystone.Ks(keystone.KS_ARCH_X86, keystone.KS_MODE_64).asm("foo eax")
+    except keystone.KsError as exc:
+        assert exc.errno == keystone.KS_ERR_ASM_MNEMONICFAIL, exc.errno
+    else:
+        raise AssertionError("Unknown mnemonic unexpectedly assembled")
+    # An immediate that one MOV cannot encode fails with errno 561, which the 0.9.2 binding reports as "Unknown error".
+    try:
+        arm64.asm("mov x0, #0x12345678")
+    except keystone.KsError as exc:
+        assert exc.errno == 561 and str(exc) == "Unknown error", (exc.errno, str(exc))
+    else:
+        raise AssertionError("Unencodable immediate unexpectedly assembled")
 
 
 def verify(work, jar):
@@ -409,6 +459,10 @@ def verify(work, jar):
     duck_digest = verify_malduck(work)
     hbc_digests = verify_hermes_dec(work)
     boofuzz_summary = verify_boofuzz(work)
+    keystone_result = {"name": "Keystone", "version": "0.9.2", "result": "skipped", "scope": "This check runs on Linux x86-64 only"}
+    if keystone_host():
+        verify_keystone()
+        keystone_result.update(result="passed", scope="x86-64 and ARM64: hand-encoded bytes, Capstone 5.0.9 disassembly and reassembly, base-relative branch, mnemonic error code; an unencodable ARM64 immediate reports errno 561 as \"Unknown error\"")
     memprocfs = {"name": "MemProcFS", "version": "5.19.0", "result": "skipped", "scope": "This check runs on Linux x86-64 only"}
     image_digest = None
     if memprocfs_host():
@@ -427,6 +481,7 @@ def verify(work, jar):
             {"name": "hermes-dec", "version": "0.1.8", "result": "passed", "scope": "HBC 98/99 at -g0/-g1: header, disassembly and pseudo-code landmarks; -g1 debug-info parsing raises TypeError; executing the pseudo-code prints 21, not 25"},
             {"name": "boofuzz", "version": "0.4.2", "result": "passed", "scope": "Localhost TRC1 protocol: default frame, 575 payload mutations with correct length/CRC, sent and replied frames match; replies unread by default, UTF-8 string mutations, and a stopped target ends the run without a failure"},
             memprocfs,
+            keystone_result,
         ],
         "inputs": [{"path": name, "sha256": sha256(SOURCE / name)} for name in ("BranchDemo.java", "Probe.java", "hbc_fixture.js", "malduck_modules/duckcfg/__init__.py", "malduck_modules/duckcfg/duckcfg.yar", "memprocfs_probe.py", "verify.py", "requirements.txt")],
         "golden_hex": GOLDEN.hex(),
@@ -438,6 +493,8 @@ def verify(work, jar):
                        "original_output": HBC_ORIGINAL_OUTPUT, "pseudocode_output": HBC_PSEUDOCODE_OUTPUT},
         "boofuzz": boofuzz_summary,
         "memprocfs": {"image_sha256": image_digest, "dtb": hex(PML4), "virtual_address": hex(FIXTURE_VA), "physical_address": hex(PAGE + 0x678)},
+        "keystone": {"base": hex(ASM_BASE), "x64": {"source": X64_SOURCE, "bytes": X64_BYTES},
+                     "arm64": {"source": A64_SOURCE, "bytes": A64_BYTES, "backward_branch_at_0x2000": A64_BACKWARD_BRANCH}},
     }
 
 
