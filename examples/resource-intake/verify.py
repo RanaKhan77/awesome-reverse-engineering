@@ -1,4 +1,4 @@
-"""Reproduce nine narrow resource examples with independent expected outputs."""
+"""Reproduce ten narrow resource examples with independent expected outputs."""
 import argparse
 import ctypes.util
 from datetime import datetime, timezone
@@ -53,6 +53,14 @@ A64_SOURCE = "mov x0, #1; add x1, x2, x3; ldr x0, [x1, #8]; b #0x1010; ret"
 A64_BYTES = "200080d24100038b200440f901000014c0035fd6"
 # The same `b #0x1010` assembled at 0x2000 is a backward branch: imm26 = (0x1010 - 0x2000) / 4.
 A64_BACKWARD_BRANCH = "04fcff17"
+ESP_ENTRY = 0x40080400
+ESP_SEGMENTS = [(0x3FFB0000, b"ESPT-DRAM-MARK01"), (0x40080400, bytes(range(32)))]
+# 0xEF XOR every segment data byte; SHA-256 of the 96 bytes before the appended digest.
+ESP_CHECKSUM = 0xF3
+ESP_DIGEST = "f8d0bbc1a5404fa6754dc071f077ffd0b7d12fdda1887b9d236ff9b53bfbc9cb"
+# The same image with bit 0 of the first DRAM data byte flipped.
+ESP_CORRUPT_CHECKSUM = 0xF2
+ESP_CORRUPT_DIGEST = "b1f33ee18559e6060ca9a6acd628f0ab432abd84afd68f55c42bda4a3cc74147"
 
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -299,7 +307,7 @@ def keystone_host():
 
 
 def required_packages():
-    packages = {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1", "boofuzz": "0.4.2"}
+    packages = {"construct": "2.10.70", "scapy": "2.8.0", "yara-x": "1.21.0", "hermes-dec": "0.1.8", "malduck": "4.4.1", "boofuzz": "0.4.2", "esptool": "5.6.0"}
     if memprocfs_host():
         packages.update(MEMPROCFS_PACKAGES)
     if keystone_host():
@@ -377,6 +385,63 @@ def verify_keystone():
         assert exc.errno == 561 and str(exc) == "Unknown error", (exc.errno, str(exc))
     else:
         raise AssertionError("Unencodable immediate unexpectedly assembled")
+
+
+def esp_image(chip_id=0):
+    """Self-authored ESP32 application image: 8-byte header, 16-byte extended header, two segments, checksum, SHA-256."""
+    image = bytearray(struct.pack("<BBBBI", 0xE9, len(ESP_SEGMENTS), 2, 0x20, ESP_ENTRY))  # DIO, 4MB at 40m
+    image += struct.pack("<B3sHBHH4sB", 0xEE, bytes(3), chip_id, 0, 0, 0xFFFF, bytes(4), 1)  # WP pin disabled, hash appended
+    total = 0xEF
+    for address, data in ESP_SEGMENTS:
+        image += struct.pack("<II", address, len(data)) + data
+        for byte in data:
+            total ^= byte
+    image += bytes(15 - len(image) % 16) + bytes([total])
+    return bytes(image + hashlib.sha256(image).digest())
+
+
+def image_info(path, *chip):
+    """Run the documented CLI offline; image-info opens no serial port."""
+    completed = subprocess.run([sys.executable, "-m", "esptool", *chip, "image-info", str(path)], text=True, capture_output=True)
+    return completed.returncode, completed.stdout + completed.stderr
+
+
+def verify_esptool(work):
+    app = work / "esp32-app.bin"
+    app.write_bytes(esp_image())
+    assert hashlib.sha256(app.read_bytes()[:-32]).hexdigest() == ESP_DIGEST and app.read_bytes()[95] == ESP_CHECKSUM
+    code, out = image_info(app)
+    assert code == 0, out
+    for line in ("Detected image type: ESP32", "Entry point: 0x40080400", "Segments: 2", "Flash size: 4MB", "Flash mode: DIO", "Chip ID: 0 (ESP32)",
+                 f"Checksum: {ESP_CHECKSUM:#x} (valid)", f"Validation hash: {ESP_DIGEST} (valid)"):
+        assert line in out, (line, out)
+    rows = re.findall(r"^\s*(\d+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+(.+?)\s*$", out, re.M)
+    assert [row[:4] for row in rows] == [("0", "0x00010", "0x3ffb0000", "0x00000018"), ("1", "0x00020", "0x40080400", "0x00000030")], rows
+    assert "DRAM" in rows[0][4] and "IRAM" in rows[1][4], rows
+
+    s3 = work / "esp32s3-app.bin"
+    s3.write_bytes(esp_image(chip_id=9))
+    code, out = image_info(s3)
+    assert code == 0 and "Detected image type: ESP32-S3" in out and "Chip ID: 9 (ESP32-S3)" in out, out
+
+    # A corrupted image is reported as invalid, but the command still exits 0.
+    corrupt = bytearray(app.read_bytes())
+    corrupt[32] ^= 1
+    bad = work / "esp32-corrupt.bin"
+    bad.write_bytes(corrupt)
+    code, out = image_info(bad)
+    assert code == 0, out
+    assert f"Checksum: {ESP_CHECKSUM:#x} (invalid - calculated {ESP_CORRUPT_CHECKSUM:#x})" in out and f"Validation hash: {ESP_CORRUPT_DIGEST} (invalid)" in out, out
+
+    truncated = work / "esp32-truncated.bin"
+    truncated.write_bytes(app.read_bytes()[:40])
+    code, out = image_info(truncated)
+    assert code == 2 and "End of file reading segment 0x3ffb0000, length 16 (actual length 8)" in out, (code, out)
+
+    # --chip overrides the header's chip ID without a warning; the memory map follows --chip.
+    code, out = image_info(app, "--chip", "esp32s3")
+    assert code == 0 and "ESP32-S3 Image Header" in out and "Chip ID: 0 (ESP32)" in out and "IRAM" not in out, out
+    return sha256(app)
 
 
 def verify(work, jar):
@@ -463,6 +528,7 @@ def verify(work, jar):
     duck_digest = verify_malduck(work)
     hbc_digests = verify_hermes_dec(work)
     boofuzz_summary = verify_boofuzz(work)
+    esp_digest = verify_esptool(work)
     keystone_result = {"name": "Keystone", "version": "0.9.2", "result": "skipped", "scope": "This check runs on Linux x86-64 only"}
     if keystone_host():
         verify_keystone()
@@ -486,6 +552,7 @@ def verify(work, jar):
             {"name": "boofuzz", "version": "0.4.2", "result": "passed", "scope": "Localhost TRC1 protocol: default frame, 575 payload mutations with correct length/CRC, sent and replied frames match; replies unread by default, UTF-8 string mutations, and a stopped target ends the run without a failure"},
             memprocfs,
             keystone_result,
+            {"name": "esptool", "version": "5.6.0", "result": "passed", "scope": "Offline image-info on self-authored ESP32 and ESP32-S3 images: header, segments, checksum and SHA-256; corrupted image exits 0 while reporting invalid, truncated image exits 2, and --chip overrides the header chip ID without a warning"},
         ],
         "inputs": [{"path": name, "sha256": sha256(SOURCE / name)} for name in ("BranchDemo.java", "Probe.java", "hbc_fixture.js", "malduck_modules/duckcfg/__init__.py", "malduck_modules/duckcfg/duckcfg.yar", "memprocfs_probe.py", "verify.py", "requirements.txt")],
         "golden_hex": GOLDEN.hex(),
@@ -499,6 +566,8 @@ def verify(work, jar):
         "memprocfs": {"image_sha256": image_digest, "dtb": hex(PML4), "virtual_address": hex(FIXTURE_VA), "physical_address": hex(PAGE + 0x678)},
         "keystone": {"base": hex(ASM_BASE), "x64": {"source": X64_SOURCE, "bytes": X64_BYTES},
                      "arm64": {"source": A64_SOURCE, "bytes": A64_BYTES, "backward_branch_at_0x2000": A64_BACKWARD_BRANCH}},
+        "esptool": {"image_sha256": esp_digest, "entry": hex(ESP_ENTRY), "checksum": hex(ESP_CHECKSUM), "validation_hash": ESP_DIGEST,
+                    "corrupt_checksum": hex(ESP_CORRUPT_CHECKSUM), "corrupt_validation_hash": ESP_CORRUPT_DIGEST},
     }
 
 
