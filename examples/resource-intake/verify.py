@@ -440,7 +440,10 @@ def verify_esptool(work):
 
     # --chip overrides the header's chip ID without a warning; the memory map follows --chip.
     code, out = image_info(app, "--chip", "esp32s3")
-    assert code == 0 and "ESP32-S3 Image Header" in out and "Chip ID: 0 (ESP32)" in out and "IRAM" not in out, out
+    assert code == 0 and "ESP32-S3 Image Header" in out and "Chip ID: 0 (ESP32)" in out and "warn" not in out.lower(), out
+    assert f"Checksum: {ESP_CHECKSUM:#x} (valid)" in out and f"Validation hash: {ESP_DIGEST} (valid)" in out, out
+    forced = re.findall(r"^\s*\d+\s+0x[0-9a-f]+\s+0x[0-9a-f]+\s+0x[0-9a-f]+\s+(.+?)\s*$", out, re.M)
+    assert forced == ["MEM_INTERNAL", "MEM_INTERNAL"], forced
     return sha256(app)
 
 
@@ -552,7 +555,7 @@ def verify(work, jar):
             {"name": "boofuzz", "version": "0.4.2", "result": "passed", "scope": "Localhost TRC1 protocol: default frame, 575 payload mutations with correct length/CRC, sent and replied frames match; replies unread by default, UTF-8 string mutations, and a stopped target ends the run without a failure"},
             memprocfs,
             keystone_result,
-            {"name": "esptool", "version": "5.6.0", "result": "passed", "scope": "Offline image-info on self-authored ESP32 and ESP32-S3 images: header, segments, checksum and SHA-256; corrupted image exits 0 while reporting invalid, truncated image exits 2, and --chip overrides the header chip ID without a warning"},
+            {"name": "esptool", "version": "5.6.0", "result": "passed", "scope": "Offline image-info on self-authored ESP32 and ESP32-S3 images: header, segments, checksum and SHA-256; corrupted image exits 0 while reporting invalid, truncated image exits 2, and --chip overrides the header chip ID without a warning while the checksum and hash stay valid"},
         ],
         "inputs": [{"path": name, "sha256": sha256(SOURCE / name)} for name in ("BranchDemo.java", "Probe.java", "hbc_fixture.js", "malduck_modules/duckcfg/__init__.py", "malduck_modules/duckcfg/duckcfg.yar", "memprocfs_probe.py", "verify.py", "requirements.txt")],
         "golden_hex": GOLDEN.hex(),

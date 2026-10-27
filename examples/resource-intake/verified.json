@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-27T05:07:31.240117+00:00",
+  "checked_at": "2026-10-27T09:43:24.722109+00:00",
   "host": {
     "platform": "Linux-6.18.44-fc-v165-x86_64-with-glibc2.39",
     "python": "3.11.17",
@@ -65,7 +65,7 @@
       "name": "esptool",
       "version": "5.6.0",
       "result": "passed",
-      "scope": "Offline image-info on self-authored ESP32 and ESP32-S3 images: header, segments, checksum and SHA-256; corrupted image exits 0 while reporting invalid, truncated image exits 2, and --chip overrides the header chip ID without a warning"
+      "scope": "Offline image-info on self-authored ESP32 and ESP32-S3 images: header, segments, checksum and SHA-256; corrupted image exits 0 while reporting invalid, truncated image exits 2, and --chip overrides the header chip ID without a warning while the checksum and hash stay valid"
     }
   ],
   "inputs": [
@@ -95,7 +95,7 @@
     },
     {
       "path": "verify.py",
-      "sha256": "08efacade19b1944ed693f10c7182f28b665ad6bc975c839928d41eacca9a9b4"
+      "sha256": "716850d656fb0bbb74bd3fa1ced5c07aa28ca53be84a6cb2d12a44e1ea7f3610"
     },
     {
       "path": "requirements.txt",
