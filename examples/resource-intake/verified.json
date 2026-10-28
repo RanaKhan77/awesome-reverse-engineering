@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-25T10:01:38.336706+00:00",
+  "checked_at": "2026-10-28T05:42:18.555714+00:00",
   "host": {
     "platform": "Linux-6.1.0-54-cloud-amd64-x86_64-with-glibc2.36",
     "python": "3.11.15",
@@ -60,6 +60,12 @@
       "version": "0.9.2",
       "result": "passed",
       "scope": "x86-64 and ARM64: hand-encoded bytes, Capstone 5.0.9 disassembly and reassembly, base-relative branch versus literal RIP displacement, mnemonic error code; an unencodable ARM64 immediate reports errno 561 as \"Unknown error\""
+    },
+    {
+      "name": "esptool",
+      "version": "5.6.0",
+      "result": "passed",
+      "scope": "Offline image-info on a synthetic ESP32 image: header, segments, checksum and SHA-256; chip ID 9 is auto-detected as ESP32-S3; checksum/hash mismatches exit 0, a truncated segment exits 2, and --chip overrides the header chip ID without a warning while the checksum and hash stay valid"
     }
   ],
   "inputs": [
@@ -89,11 +95,11 @@
     },
     {
       "path": "verify.py",
-      "sha256": "c8b028e332e8d94416cd4c5c8a33321168345e563fc066835a903f2a171dce15"
+      "sha256": "efb00dc7a14818b9eff884db162d0bb0232ed7d065188dca6adf56739e0dd8e8"
     },
     {
       "path": "requirements.txt",
-      "sha256": "7cb39a2d7055d308366664a6aea5087ca494f0b201d03c020da7bf25c50a9ef9"
+      "sha256": "e41b6fb3c1fba4ea571c1920c02082517a425e666d7d64a46776427660065198"
     }
   ],
   "golden_hex": "534d4b310500017472616365",
@@ -135,11 +141,11 @@
     "hbc_sha256": {
       "98": {
         "g0": "d1ceacc1f40097b798abf4eeaf8f2f0a663afa9ed8d8fdd5f2b2d99ee2e422a8",
-        "g1": "f13de683418a70df98abdaf607c4ca828e83403f621d38b5294696a1e616bf3f"
+        "g1": "9e184de9023968d05edf1da1f40759170d0c46e50cb53247c29b1c647e0cfb82"
       },
       "99": {
         "g0": "f51e55203c85ab6fd016ab83862f81aa61cc2f441087c10ef712c2148bf7b57d",
-        "g1": "8c370f14502c8f7175f74acddf04a2097600dffb4e038b7b50e22e12fcb6eb00"
+        "g1": "3c1c153e7f108d3e64dabdd455ce8cd6273b1fa971f8be0f2263187f529b176b"
       }
     },
     "original_output": "even:negative:25",
@@ -167,5 +173,13 @@
       "bytes": "200080d24100038b200440f901000014c0035fd6",
       "backward_branch_at_0x2000": "04fcff17"
     }
+  },
+  "esptool": {
+    "image_sha256": "57c7723bbb04b780c42ca98e756f1706a1bf6bf874f6f748f4897475645a9079",
+    "entry": "0x40080400",
+    "checksum": "0xf3",
+    "validation_hash": "f8d0bbc1a5404fa6754dc071f077ffd0b7d12fdda1887b9d236ff9b53bfbc9cb",
+    "corrupt_checksum": "0xf2",
+    "corrupt_validation_hash": "b1f33ee18559e6060ca9a6acd628f0ab432abd84afd68f55c42bda4a3cc74147"
   }
 }

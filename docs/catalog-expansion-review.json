@@ -690,16 +690,17 @@
     {
       "name": "esptool",
       "url": "https://github.com/espressif/esptool",
-      "description": "Serial bootloader utility for inspecting and reading or flashing Espressif devices; current source requires Python 3.10+ and a compatible device connection.",
+      "description": "Serial bootloader utility for reading or flashing Espressif devices, with offline `image-info` inspection of firmware headers, segments, checksums, and SHA-256 hashes; requires Python 3.10+, and 5.6.0 returns exit code 0 for checksum/hash mismatches.",
       "checked_at": "2026-10-25",
       "next_review": "2026-11-25",
       "evidence_type": "documented",
       "execution_verified": false,
-      "task_and_output": "Serial bootloader utility for inspecting and reading or flashing Espressif devices",
-      "constraints": " current source requires Python 3.10+ and a compatible device connection.",
+      "task_and_output": "Serial bootloader utility for reading or flashing Espressif devices and inspecting firmware images offline",
+      "constraints": "Current source requires Python 3.10+; reading and flashing need a compatible device connection; offline `image-info` is exercised by the resource-intake examples, and no device was connected.",
       "sources": [
         "https://raw.githubusercontent.com/espressif/esptool/93477aceb5bc28971db26223a60339bb53e9390a/README.md",
-        "https://raw.githubusercontent.com/espressif/esptool/93477aceb5bc28971db26223a60339bb53e9390a/pyproject.toml"
+        "https://raw.githubusercontent.com/espressif/esptool/93477aceb5bc28971db26223a60339bb53e9390a/pyproject.toml",
+        "https://raw.githubusercontent.com/espressif/esptool/e970488de2c8f1906ca9b08de681b3f9dc58b2d5/docs/en/advanced-topics/firmware-image-format.rst"
       ],
       "source_commit": "93477aceb5bc28971db26223a60339bb53e9390a",
       "source_date": "2026-10-20T14:01:25Z",

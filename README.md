@@ -242,7 +242,7 @@ Run samples only in isolated, disposable environments, and follow your organizat
 - [Binwalk](https://github.com/ReFirmLabs/binwalk) - Identifies embedded files and extracts content from firmware images.
 - [ChipWhisperer](https://github.com/newaetech/chipwhisperer) - Hardware and Python tooling for side-channel power analysis and fault-injection experiments; live capture and glitching require compatible capture and target hardware.
 - [EMBA](https://github.com/e-m-b-a/emba) - Firmware security analyzer that extracts images, runs static and emulation-based checks, and produces reports and SBOMs.
-- [esptool](https://github.com/espressif/esptool) - Serial bootloader utility for inspecting and reading or flashing Espressif devices; current source requires Python 3.10+ and a compatible device connection.
+- [esptool](https://github.com/espressif/esptool) - Serial bootloader utility for reading or flashing Espressif devices, with offline `image-info` inspection of firmware headers, segments, checksums, and SHA-256 hashes; requires Python 3.10+, and 5.6.0 returns exit code 0 for checksum/hash mismatches.
 - [Facedancer](https://github.com/greatscottgadgets/facedancer) - Python USB device-emulation and proxy framework for compatible hardware on GNU/Linux; 3.x does not support legacy scripts and backend capabilities vary.
 - [FACT](https://github.com/fkie-cad/FACT_core) - Linux firmware extraction, analysis, and comparison platform; the native installer has specific distribution and Python requirements, while the separate Docker route is unmaintained.
 - [FirmAE](https://github.com/pr0v3rbs/FirmAE) - Emulates Linux-based router and IP camera firmware for dynamic analysis, using heuristics that make full-system emulation succeed more often.
@@ -256,7 +256,7 @@ Run samples only in isolated, disposable environments, and follow your organizat
 - [QEMU](https://www.qemu.org/) - Machine emulator for running firmware and programs built for other architectures, with a GDB stub for debugging.
 - [Renode](https://github.com/renode/renode) - Embedded-system simulator with scriptable platform and peripheral models for repeatable firmware debugging and observation.
 - [ripcord](https://github.com/DavidClawson/ripcord) - Ghidra-based firmware-analysis pipeline producing queryable Parquet tables for DuckDB; requires Ghidra 11.2+ with PyGhidra and Python 3.11+, with optional simulation tooling.
-- [sigrok](https://sigrok.org/) - Signal analysis tools and protocol decoders for logic analyzers and related hardware.
+- [sigrok](https://github.com/sigrokproject) - Signal analysis tools and protocol decoders for logic analyzers and related hardware.
 - [UEFITool](https://github.com/LongSoft/UEFITool) - Parses UEFI firmware structures and extracts or replaces modules.
 - [unblob](https://github.com/onekey-sec/unblob) - Extracts nested archives, compressed data, and filesystem images from firmware and other files.
 - [usb-rea](https://github.com/emirmrkaljevic/usb-rea) - Infers USB protocol fields, counters, checksums, and multi-packet commands from captures of labelled actions, with frame-number evidence, and generates pyusb driver code and Wireshark Lua dissectors; requires Python 3.10+, with usbmon plus dumpcap/tshark on Linux or USBPcap on Windows for capture, and remains alpha without physical-device validation.

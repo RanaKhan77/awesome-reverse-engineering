@@ -1,6 +1,6 @@
 # Bounded resource examples
 
-These self-authored fixtures demonstrate Construct, Scapy, YARA-X, Vineflower, Malduck, hermes-dec, MemProcFS, boofuzz, and Keystone in CI, plus a local PyLingual check. They are small selection examples, not upstream test suites or evidence of full platform/version support.
+These self-authored fixtures demonstrate Construct, Scapy, YARA-X, Vineflower, Malduck, hermes-dec, MemProcFS, boofuzz, Keystone, and esptool in CI, plus a local PyLingual check. They are small selection examples, not upstream test suites or evidence of full platform/version support.
 
 Use Python 3.11 with `venv`/`pip` support, JDK 17, Node.js, and an Internet connection for the pinned packages, JAR, and Hermes compilers. From the repository root:
 
@@ -41,6 +41,7 @@ $resourcePython = Join-Path $resourceExamplesDir "venv\Scripts\python.exe"
 | MemProcFS 5.19.0 | A 16 MiB raw image with a self-built x64 page table; with `-dtb 0x10000` the [probe](memprocfs_probe.py) shows one `unknown_process`, reads `MPFS-PHYS-MARK-1` at physical `0x1000` and through `/memory.pmem`, and translates `0x140001678` to physical `0x345678` where it reads `MPFS-VIRT-MARK-2` | Physical-memory, page-table, and virtual-file-system API on Linux x86-64 only; no Windows OS analysis |
 | boofuzz 0.4.2 | A made-up TRC1 protocol (`TRC1`, kind, big-endian length, payload, big-endian CRC-32) described with `Size` and `Checksum` blocks; the default frame matches bytes built with `struct` and `zlib`, and a localhost server receives all 575 payload mutations with a correct length and CRC, replying to each | One-field-at-a-time fuzzing (`max_depth=1`) against a localhost server only; see the limits below |
 | Keystone 0.9.2 (with Capstone 5.0.9) | x86-64 `push rbp; mov rbp, rsp; mov eax, dword ptr [rbx + rcx*4 + 8]; xor eax, eax; pop rbp; ret` and ARM64 `mov x0, #1; add x1, x2, x3; ldr x0, [x1, #8]; b #0x1010; ret` at base `0x1000` assemble to bytes encoded by hand from the Intel SDM and Arm ARM (`554889e58b448b0831c05dc3`, `200080d24100038b200440f901000014c0035fd6`); Capstone disassembles them back to the same text, which reassembles to the same bytes; `b #0x1010` at `0x2000` becomes the backward branch `04fcff17` | Two short sequences on two ISAs, Linux x86-64 only; see the limits below |
+| esptool 5.6.0 | A 128-byte ESP32 application image built by hand from the [5.6.0 documented layout](https://raw.githubusercontent.com/espressif/esptool/e970488de2c8f1906ca9b08de681b3f9dc58b2d5/docs/en/advanced-topics/firmware-image-format.rst): entry `0x40080400`, a 16-byte DRAM segment at `0x3ffb0000` and a 32-byte IRAM segment at `0x40080400`, checksum `0xf3` (`0xEF` XOR the segment data) and an appended SHA-256 `f8d0bbc1…c9cb`; `image-info` reports the header, both segments at file offsets `0x18` and `0x30`, and a valid checksum and hash, with no device connected. A synthetic variant with chip ID 9 is detected as ESP32-S3 (header identification only); flipping one data bit gives checksum `0xf2` and hash `b1f33ee1…4147`, both reported as invalid | Offline `image-info` on one ESP32 application layout; no serial port, flashing, or bootloader images; see the limits below |
 
 The branch oracle for `Probe.java` is:
 
@@ -68,6 +69,11 @@ The Keystone check also records two limits:
 
 - A branch to an absolute target is encoded as an offset from the address passed to `asm()`, so the same text gives different bytes at another base. A RIP-relative memory operand such as `[rip + 8]` instead keeps its literal displacement bytes at both bases; moving those bytes changes the address they access.
 - An unknown mnemonic fails with `KS_ERR_ASM_MNEMONICFAIL`, but an ARM64 immediate that one `MOV` cannot encode (`mov x0, #0x12345678`) fails with errno 561, which the 0.9.2 Python binding has no constant for and reports only as "Unknown error".
+
+The esptool check also records two limits:
+
+- In 5.6.0, `image-info` reports checksum/hash mismatches as `invalid` but still exits 0, so a script must read those lines rather than the exit status. A file cut off inside a segment exits 2 (`End of file reading segment 0x3ffb0000, length 16 (actual length 8)`).
+- `--chip esp32s3` makes `image-info` parse an ESP32 image as ESP32-S3 without a warning: it still prints `Chip ID: 0 (ESP32)` and a valid checksum, but labels the segments with the ESP32-S3 memory map. Without `--chip`, the chip comes from the image header.
 
 Without `-dtb`, MemProcFS rejects a raw image that contains no identifiable operating system (`Unable to locate valid DTB`). The Linux `memprocfs` wheel does not include `leechcore.so`; the runner uses the one from `leechcorepyc` by starting the probe with `LD_LIBRARY_PATH` pointing at its directory.
 
